@@ -948,6 +948,39 @@ function doGet(e) {
   </div>
 </div>
 
+
+<!-- ════ MODAL: RESET ════ -->
+<div class="modal-overlay" id="modal-reset">
+  <div class="modal modal-sm">
+    <div class="modal-header" style="background:#FEE2E2;">
+      <h3 style="color:#991B1B;">⚠ Resetear Sistema</h3>
+      <button class="modal-close" onclick="closeModal('modal-reset')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger" style="margin-bottom:20px;">
+        <strong>¡Esta acción es irreversible!</strong><br>
+        Se eliminarán <strong>TODOS</strong> los recibos del sistema local y de Google Sheets. El contador volverá a cero.
+      </div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:20px;">
+        Para confirmar, escribe <strong>RESETEAR</strong> en el campo:
+      </p>
+      <div class="fg">
+        <label>Confirmación</label>
+        <input type="text" id="reset-confirm-input" placeholder="Escribe RESETEAR"
+          oninput="checkResetConfirm(this.value)" autocomplete="off">
+      </div>
+      <div id="reset-err" class="alert alert-danger" style="display:none;margin-top:12px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-reset')">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirm-reset" disabled
+        onclick="executeReset()" style="opacity:.4;cursor:not-allowed;">
+        🗑 Confirmar Reset Total
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1834,8 +1867,48 @@ function sendFileToDrive(sponsor,filename,base64content,mimeType){
   }).catch(function(){});
 }
 
+
 // ══════════════════════════════════════════
-// SPONSOR VERIFICATION
+// RESET SYSTEM
 // ══════════════════════════════════════════
-function verifySponsor(){
-  var name=document.getElementById
+function openResetModal(){
+  document.getElementById('reset-confirm-input').value='';
+  document.getElementById('reset-err').style.display='none';
+  var btn=document.getElementById('btn-confirm-reset');
+  btn.disabled=true; btn.style.opacity='.4'; btn.style.cursor='not-allowed';
+  openModal('modal-reset');
+}
+function checkResetConfirm(val){
+  var btn=document.getElementById('btn-confirm-reset');
+  if(val.trim()==='RESETEAR'){
+    btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer';
+  } else {
+    btn.disabled=true; btn.style.opacity='.4'; btn.style.cursor='not-allowed';
+  }
+}
+function executeReset(){
+  var btn=document.getElementById('btn-confirm-reset');
+  btn.textContent='Borrando...'; btn.disabled=true;
+  receipts=[]; DB.set('receipts',[]);
+  if(sheetsUrl){
+    var params=new URLSearchParams();
+    params.append('type','reset');
+    fetch(sheetsUrl,{method:'POST',mode:'no-cors',body:params}).catch(function(){});
+  }
+  setTimeout(function(){
+    closeModal('modal-reset');
+    renderReceiptsList(); updateStats(); updateNextBadge();
+    showToast('✓ Sistema reseteado. Todos los recibos eliminados.');
+    btn.textContent='🗑 Confirmar Reset Total';
+  },800);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  prefillDate();
+});
+</script>
+</body>
+</html>

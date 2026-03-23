@@ -431,6 +431,26 @@ nav{
   .sponsor-hero{padding:36px 20px 30px;}
   .sponsor-hero h1{font-size:36px;}
 }
+.sponsor-hero{
+  background:var(--navy);
+  padding:32px 24px 28px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.sponsor-hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.012) 40px,rgba(255,255,255,.012) 80px);
+}
+.sponsor-hero h1{font-family:var(--display);font-size:clamp(32px,7vw,54px);font-weight:900;color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:4px;}
+.hero-sub1{font-family:var(--display);font-size:clamp(12px,2.5vw,16px);font-weight:600;color:var(--orange);letter-spacing:4px;text-transform:uppercase;margin-bottom:4px;}
+.sponsor-hero h2{font-family:var(--display);font-size:clamp(16px,3.5vw,24px);font-weight:700;color:rgba(255,255,255,.85);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+.info-pill{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:8px 20px;font-size:13px;color:rgba(255,255,255,.75);margin-bottom:16px;}
+.info-pill span{color:rgba(255,255,255,.35);}
+.countdown-wrap{display:inline-flex;align-items:center;gap:6px;background:rgba(13,31,60,.6);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:10px 20px;flex-wrap:wrap;justify-content:center;}
+.cd-label{font-family:var(--display);font-size:12px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;margin-right:6px;}
+.cd-block{text-align:center;min-width:44px;}
+.cd-num{font-family:var(--display);font-size:26px;font-weight:900;color:var(--white);line-height:1;display:block;}
+.cd-unit{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.cd-sep{font-family:var(--display);font-size:22px;color:var(--orange);font-weight:900;padding-bottom:8px;}
 </style>
 </head>
 <body>
@@ -438,17 +458,29 @@ nav{
 <!-- ════════════════════ NAV ════════════════════ -->
 <nav style="background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:58px;box-shadow:0 3px 20px rgba(13,31,60,.35);position:sticky;top:0;z-index:200;">
   <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:42px;width:auto;object-fit:contain;" alt="Logo">
-  <!-- <a href="index.html" style="color:rgba(255,255,255,.6);font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">&#8592; Inicio</a>-->
+
 </nav>
 
 <!-- PORTAL DEL PATROCINADOR -->
   <div class="sponsor-hero">
-    <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:150px;width:auto;display:block;margin:0 auto 16px;object-fit:contain;background:transparent;" alt="Logo">
-    <!-- ESTE TEXTO ESTA COMO COMENTARIO EN VEZ DE EL SE COLOCA EL LOGO DE INDUSTRIAL-->
-    <!--<h1>IV CONGRESO</h1>-->
-    <!--<h2>Con énfasis en Logística</h2>-->
-    <!--<h2>Ingeniería Industrial</h2>-->
-    <p>Portal oficial de verificación y registro de material para patrocinadores</p>
+    <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:80px;width:auto;display:block;margin:0 auto 10px;object-fit:contain;background:transparent;" alt="Logo">
+    <h1>IV CONGRESO</h1>
+    <div class="hero-sub1">Con énfasis en Logística</div>
+    <h2>Ingeniería Industrial</h2>
+    <div class="info-pill">
+      📍 Hotel Puerto Libre, Puerto Barrios <span>·</span> 25 de Abril, 2026
+    </div>
+    <div class="countdown-wrap">
+      <span class="cd-label">Faltan</span>
+      <div class="cd-block"><span class="cd-num" id="cd-d">--</span><div class="cd-unit">Días</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><span class="cd-num" id="cd-h">--</span><div class="cd-unit">Hrs</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><span class="cd-num" id="cd-m">--</span><div class="cd-unit">Min</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><span class="cd-num" id="cd-s">--</span><div class="cd-unit">Seg</div></div>
+    </div>
+    <p style="margin-top:14px;font-size:14px;color:rgba(255,255,255,.55);">Portal oficial de verificación y registro de material para patrocinadores</p>
   </div>
 
   <div class="sponsor-wrap">
@@ -1172,6 +1204,30 @@ function showToast(msg){
 document.addEventListener('DOMContentLoaded',function(){
   // patrocinador standalone page
 });
+
+// ── Cuenta regresiva ──
+var CD_TARGET=new Date('2026-04-25T08:00:00').getTime();
+function tickCD(){
+  var diff=CD_TARGET-Date.now();
+  if(diff<=0){
+    var cw=document.querySelector('.countdown-wrap');
+    if(cw) cw.innerHTML='<span style="color:var(--gold);font-family:var(--display);font-size:18px;font-weight:900;">¡El congreso ha comenzado!</span>';
+    return;
+  }
+  var d=Math.floor(diff/86400000);
+  var h=Math.floor((diff%86400000)/3600000);
+  var m=Math.floor((diff%3600000)/60000);
+  var s=Math.floor((diff%60000)/1000);
+  var dd=document.getElementById('cd-d');
+  var dh=document.getElementById('cd-h');
+  var dm=document.getElementById('cd-m');
+  var ds=document.getElementById('cd-s');
+  if(dd) dd.textContent=String(d).padStart(2,'0');
+  if(dh) dh.textContent=String(h).padStart(2,'0');
+  if(dm) dm.textContent=String(m).padStart(2,'0');
+  if(ds) ds.textContent=String(s).padStart(2,'0');
+}
+tickCD();setInterval(tickCD,1000);
 </script>
 </body>
 </html>
