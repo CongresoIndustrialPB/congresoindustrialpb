@@ -966,55 +966,29 @@ function submitMaterial(){
 // ══════════════════════════════════════════
 // DRIVE UPLOAD
 // ══════════════════════════════════════════
+// Envío como JSON — Apps Script lo lee con JSON.parse(e.postData.contents)
+// Este es el método más confiable: no sufre pérdida de parámetros en redirects.
 function sendFileToDrive(sponsor, filename, base64content, mimeType){
   if(!sheetsUrl) return Promise.resolve();
-  // Use a hidden form POST - this bypasses no-cors restrictions
-  // and allows Apps Script to read all parameters correctly
-  return new Promise(function(resolve){
-    try {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = sheetsUrl;
-      form.target = 'upload_frame_' + Date.now();
-      form.style.display = 'none';
 
-      var fields = {
-        type:     'file',
-        sponsor:  sponsor,
-        filename: filename,
-        content:  base64content,
-        mimeType: mimeType
-      };
+  var payload = JSON.stringify({
+    type:     'file',
+    sponsor:  sponsor,
+    filename: filename,
+    mimeType: mimeType,
+    content:  base64content
+  });
 
-      Object.keys(fields).forEach(function(key){
-        var input = document.createElement('input');
-        input.type  = 'hidden';
-        input.name  = key;
-        input.value = fields[key];
-        form.appendChild(input);
-      });
-
-      // Create invisible iframe to receive the response
-      var iframe = document.createElement('iframe');
-      iframe.name = form.target;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-      document.body.appendChild(form);
-
-      iframe.onload = function(){
-        // Clean up after submission
-        setTimeout(function(){
-          try { document.body.removeChild(form); } catch(e){}
-          try { document.body.removeChild(iframe); } catch(e){}
-        }, 3000);
-        resolve();
-      };
-
-      form.submit();
-    } catch(err){
-      console.error('sendFileToDrive error:', err);
-      resolve(); // Don't block the Promise.all
-    }
+  return fetch(sheetsUrl, {
+    method:  'POST',
+    mode:    'no-cors',   // Apps Script no envía CORS headers — opaque response es normal
+    headers: { 'Content-Type': 'application/json' },
+    body:    payload
+  }).then(function(){
+    // no-cors siempre da opaque response — ausencia de error = éxito
+    console.log('Archivo enviado:', filename, '| Patrocinador:', sponsor);
+  }).catch(function(err){
+    console.error('sendFileToDrive error:', err);
   });
 }
 
