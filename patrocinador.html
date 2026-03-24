@@ -681,7 +681,7 @@ nav{
 
 <script>
 // ── Config ──
-var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbzzHwErT-vt8amAO33WOceL5PMi6ByhTEEQ_rZwTTDVTtsKlS6autKBY18rdif4bZtdcA/exec';
+var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw8LUW7PPFWXLtgXg5T7dPhaI9vcLTy5AhIj4y776W-52yLXsE52HKdADtscU_zDvhWpA/exec';
 var DB = {
   get: function(k,def){ try{ var v=localStorage.getItem('iv4_'+k); return v!==null?JSON.parse(v):def; }catch(e){return def;} },
   set: function(k,v){ try{ localStorage.setItem('iv4_'+k,JSON.stringify(v)); }catch(e){} }
@@ -952,16 +952,54 @@ function submitMaterial(){
 // ══════════════════════════════════════════
 function sendFileToDrive(sponsor, filename, base64content, mimeType){
   if(!sheetsUrl) return Promise.resolve();
-  // Pass sponsor in URL so it always arrives regardless of no-cors body parsing
-  var urlWithSponsor = sheetsUrl + '?type=file&sponsor=' + encodeURIComponent(sponsor);
-  var params = new URLSearchParams();
-  params.append('type',     'file');
-  params.append('sponsor',  sponsor);
-  params.append('filename', filename);
-  params.append('content',  base64content);
-  params.append('mimeType', mimeType);
-  return fetch(urlWithSponsor, {method:'POST', mode:'no-cors', body:params})
-    .catch(function(){});
+  // Use a hidden form POST - this bypasses no-cors restrictions
+  // and allows Apps Script to read all parameters correctly
+  return new Promise(function(resolve){
+    try {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = sheetsUrl;
+      form.target = 'upload_frame_' + Date.now();
+      form.style.display = 'none';
+
+      var fields = {
+        type:     'file',
+        sponsor:  sponsor,
+        filename: filename,
+        content:  base64content,
+        mimeType: mimeType
+      };
+
+      Object.keys(fields).forEach(function(key){
+        var input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = key;
+        input.value = fields[key];
+        form.appendChild(input);
+      });
+
+      // Create invisible iframe to receive the response
+      var iframe = document.createElement('iframe');
+      iframe.name = form.target;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+
+      iframe.onload = function(){
+        // Clean up after submission
+        setTimeout(function(){
+          try { document.body.removeChild(form); } catch(e){}
+          try { document.body.removeChild(iframe); } catch(e){}
+        }, 3000);
+        resolve();
+      };
+
+      form.submit();
+    } catch(err){
+      console.error('sendFileToDrive error:', err);
+      resolve(); // Don't block the Promise.all
+    }
+  });
 }
 
 function fileToBase64(file){
