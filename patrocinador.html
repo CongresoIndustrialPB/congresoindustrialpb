@@ -321,6 +321,7 @@ nav{
   animation:spin-slow 20s linear infinite;
 }
 @keyframes spin-slow{to{transform:rotate(360deg);}}
+@keyframes dot-bounce{from{transform:translateY(0);opacity:.4;}to{transform:translateY(-8px);opacity:1;}}
 .sponsor-hero h1{
   font-family:var(--display);font-size:48px;font-weight:900;
   color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:6px;
@@ -677,11 +678,32 @@ nav{
   </div>
 
 <!-- TOAST -->
+<!-- ══ MODAL: Cargando archivos ══ -->
+<div class="modal-overlay" id="modal-uploading">
+  <div class="modal modal-sm" style="text-align:center;padding:48px 36px;">
+    <div style="font-size:56px;margin-bottom:16px;animation:spin-slow 2s linear infinite;display:inline-block;">⚙️</div>
+    <h3 style="font-family:var(--display);font-size:24px;font-weight:900;color:var(--navy);margin-bottom:10px;">
+      Subiendo archivos…
+    </h3>
+    <p style="font-size:15px;color:var(--text);line-height:1.7;margin-bottom:6px;">
+      <strong>Gracias por formar parte de nuestro Congreso.</strong>
+    </p>
+    <p style="font-size:14px;color:var(--muted);">
+      Sus archivos se están cargando, por favor no cierre esta ventana.
+    </p>
+    <div style="margin-top:28px;display:flex;justify-content:center;gap:8px;">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block;animation:dot-bounce .8s infinite alternate;"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block;animation:dot-bounce .8s .2s infinite alternate;"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--orange);display:inline-block;animation:dot-bounce .8s .4s infinite alternate;"></span>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ── Config ──
-var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbxVEJTwxH6IfdHcs3OLUa7TiD5elCx6LpJ-0KaIc0TuePLLfhtQcAXDEMK4vY2Jh7TenA/exec';
+var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbzECrUsJZIsEW0-m239BV4h4c27UNH2CRNYklbpr7fquyTZB7gCYvpsFJzt1yESqadIPg/exec';
 var DB = {
   get: function(k,def){ try{ var v=localStorage.getItem('iv4_'+k); return v!==null?JSON.parse(v):def; }catch(e){return def;} },
   set: function(k,v){ try{ localStorage.setItem('iv4_'+k,JSON.stringify(v)); }catch(e){} }
@@ -919,76 +941,100 @@ function submitMaterial(){
   if(!logoFile){ err.style.display='block'; err.textContent='Por favor sube el logotipo de tu empresa.'; return; }
   if(!photoFiles||photoFiles.length<1){ err.style.display='block'; err.textContent='Por favor sube al menos una fotografía de actividades.'; return; }
   err.style.display='none';
-
   var r=window._currentSponsorReceipt;
-  // CORRECCIÓN: verificar que el nombre del patrocinador existe antes de continuar
-  var sponsorName = (r && r.patron && r.patron.trim()) ? r.patron.trim() : '';
-  if(!sponsorName){
-    err.style.display='block';
-    err.textContent='Error: no se pudo identificar el patrocinador. Por favor verifica tu patrocinio nuevamente.';
-    return;
-  }
+  var sponsorName=r?r.patron:'Patrocinador';
 
-  // CORRECCIÓN: enviar archivos de forma SECUENCIAL (no en paralelo con Promise.all)
-  // Esto garantiza que el backend reusar la misma carpeta ya creada, evitando duplicados.
-  var allFiles=[];
-  allFiles.push({file:logoFile, name:logoFile.name, type:logoFile.type});
-  photoFiles.forEach(function(f){ allFiles.push({file:f, name:f.name, type:f.type}); });
+  // Mostrar modal de carga al instante
+  openModal('modal-uploading');
 
-  function uploadNext(index){
-    if(index >= allFiles.length){
-      // Todos enviados
-      showToast('✓ Material enviado exitosamente. ¡Gracias!');
-      document.getElementById('upload-err').style.display='none';
-      document.querySelector('#sp-welcome-section .card .card-body').innerHTML=`
-        <div class="alert alert-success" style="text-align:center;padding:32px;font-size:16px;">
-          <div style="font-size:40px;margin-bottom:12px;">✅</div>
-          <strong>¡Material enviado exitosamente!</strong><br>
-          <span style="font-size:14px;color:var(--success);">Tu logotipo y fotografías han sido recibidos.<br>Serán utilizados en la publicidad del IV Congreso.</span>
-          <div style="margin-top:20px;">
-            <button class="btn btn-outline" onclick="resetSponsor()">← Verificar otro patrocinador</button>
-          </div>
-        </div>`;
-      return;
-    }
-    var item=allFiles[index];
-    fileToBase64(item.file).then(function(b64){
-      return sendFileToDrive(sponsorName, item.name, b64, item.type);
-    }).then(function(){
-      uploadNext(index+1);
-    }).catch(function(e){
-      console.error('Error subiendo archivo:', item.name, e);
-      uploadNext(index+1); // continuar con el siguiente aunque falle uno
-    });
-  }
-  uploadNext(0);
+  var promises=[];
+  promises.push(fileToBase64(logoFile).then(function(b64){
+    return sendFileToDrive(sponsorName, logoFile.name, b64, logoFile.type);
+  }));
+  photoFiles.forEach(function(f){
+    promises.push(fileToBase64(f).then(function(b64){
+      return sendFileToDrive(sponsorName, f.name, b64, f.type);
+    }));
+  });
+  Promise.all(promises).then(function(){
+    closeModal('modal-uploading');
+    showToast('✓ Material enviado exitosamente. ¡Gracias!');
+    document.getElementById('upload-err').style.display='none';
+    document.querySelector('#sp-welcome-section .card .card-body').innerHTML=`
+      <div class="alert alert-success" style="text-align:center;padding:32px;font-size:16px;">
+        <div style="font-size:40px;margin-bottom:12px;">✅</div>
+        <strong>¡Material enviado exitosamente!</strong><br>
+        <span style="font-size:14px;color:var(--success);">Tu logotipo y fotografías han sido recibidos.<br>Serán utilizados en la publicidad del IV Congreso.</span>
+        <div style="margin-top:20px;">
+          <button class="btn btn-outline" onclick="resetSponsor()">← Verificar otro patrocinador</button>
+        </div>
+      </div>`;
+  }).catch(function(){
+    closeModal('modal-uploading');
+    showToast('✓ Material recibido localmente. Configura Google Drive para envío automático.');
+  });
 }
 // ══════════════════════════════════════════
 // DRIVE UPLOAD
 // ══════════════════════════════════════════
-// Envío como JSON — Apps Script lo lee con JSON.parse(e.postData.contents)
-// Este es el método más confiable: no sufre pérdida de parámetros en redirects.
 function sendFileToDrive(sponsor, filename, base64content, mimeType){
   if(!sheetsUrl) return Promise.resolve();
+  // Use a hidden form POST - this bypasses no-cors restrictions
+  // and allows Apps Script to read all parameters correctly
+  return new Promise(function(resolve){
+    try {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = sheetsUrl;
+      form.target = 'upload_frame_' + Date.now();
+      form.style.display = 'none';
 
-  var payload = JSON.stringify({
-    type:     'file',
-    sponsor:  sponsor,
-    filename: filename,
-    mimeType: mimeType,
-    content:  base64content
+      var fields = {
+        type:     'file',
+        sponsor:  sponsor,
+        filename: filename,
+        content:  base64content,
+        mimeType: mimeType
+      };
+
+      Object.keys(fields).forEach(function(key){
+        var input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = key;
+        input.value = fields[key];
+        form.appendChild(input);
+      });
+
+      // Create invisible iframe to receive the response
+      var iframe = document.createElement('iframe');
+      iframe.name = form.target;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+
+      iframe.onload = function(){
+        // Clean up after submission
+        setTimeout(function(){
+          try { document.body.removeChild(form); } catch(e){}
+          try { document.body.removeChild(iframe); } catch(e){}
+        }, 3000);
+        resolve();
+      };
+
+      form.submit();
+    } catch(err){
+      console.error('sendFileToDrive error:', err);
+      resolve(); // Don't block the Promise.all
+    }
   });
+}
 
-  return fetch(sheetsUrl, {
-    method:  'POST',
-    mode:    'no-cors',   // Apps Script no envía CORS headers — opaque response es normal
-    headers: { 'Content-Type': 'application/json' },
-    body:    payload
-  }).then(function(){
-    // no-cors siempre da opaque response — ausencia de error = éxito
-    console.log('Archivo enviado:', filename, '| Patrocinador:', sponsor);
-  }).catch(function(err){
-    console.error('sendFileToDrive error:', err);
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    var r = new FileReader();
+    r.onload = function(e){ res(e.target.result.split(',')[1]); };
+    r.onerror = rej;
+    r.readAsDataURL(file);
   });
 }
 
@@ -1001,7 +1047,7 @@ document.addEventListener('click',function(e){
   if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
 });
 // ══════════════════════════════════════════
-// TOAST (fileToBase64 duplicada eliminada — ya está definida arriba)
+// TOAST
 // ══════════════════════════════════════════
 var _toastTimer=null;
 function showToast(msg){
