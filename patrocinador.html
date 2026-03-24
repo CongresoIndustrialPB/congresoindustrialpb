@@ -6,91 +6,1020 @@
 <title>Portal del Patrocinador — IV Congreso Ingeniería Industrial</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* TODO TU CSS PERMANECE IGUAL */
 :root {
-  --orange:#E8580A; --orange2:#FF8C00; --navy:#0D1F3C; --navy2:#162B52; --navy3:#1E3A6E;
-  --gold:#F5A623; --white:#FFFFFF; --bg:#F0F2F7; --border:#D1D8E8; --text:#0D1F3C;
-  --muted:#6B7A99; --success:#1A7F5A; --success-bg:#D4EDDA; --danger:#C0392B;
-  --danger-bg:#FDECEA; --font:'Barlow',sans-serif; --display:'Barlow Condensed',sans-serif;
-  --radius:10px; --radius-lg:16px;
+  --orange:#E8580A;
+  --orange2:#FF8C00;
+  --navy:#0D1F3C;
+  --navy2:#162B52;
+  --navy3:#1E3A6E;
+  --gold:#F5A623;
+  --white:#FFFFFF;
+  --bg:#F0F2F7;
+  --border:#D1D8E8;
+  --text:#0D1F3C;
+  --muted:#6B7A99;
+  --success:#1A7F5A;
+  --success-bg:#D4EDDA;
+  --danger:#C0392B;
+  --danger-bg:#FDECEA;
+  --font:'Barlow',sans-serif;
+  --display:'Barlow Condensed',sans-serif;
+  --radius:10px;
+  --radius-lg:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
-nav{background:var(--navy);display:flex;align-items:center;padding:0 28px;height:58px;box-shadow:0 3px 20px rgba(13,31,60,.35);position:sticky;top:0;z-index:100;}
-.nav-logo{height:42px;width:auto;object-fit:contain;}
-/* ... (Se mantienen todos tus estilos originales) ... */
-.container{max-width:1200px;margin:0 auto;padding:24px 20px 60px;}
-.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);padding:34px 24px;box-shadow:0 2px 12px rgba(13,31,60,.06);height:100%;}
-.btn-primary{background:var(--orange);color:var(--white);border:none;padding:14px 24px;border-radius:var(--radius);font-family:var(--display);font-size:16px;font-weight:700;text-transform:uppercase;cursor:pointer;width:100%;transition:all .25s;}
-#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:14px 28px;border-radius:50px;font-size:14px;display:none;z-index:1000;}
-#toast.show{display:block;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+a{color:inherit;text-decoration:none;}
+
+/* ── NAV ── */
+nav{
+  background:var(--navy);
+  display:flex;align-items:stretch;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 3px 20px rgba(13,31,60,.35);
+}
+.nav-brand{
+  display:flex;align-items:center;gap:14px;
+  padding:0 30px 0 22px;
+  border-right:1px solid rgba(255,255,255,.1);
+  flex-shrink:0;
+}
+.nav-logo-circle{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.nav-brand-text{line-height:1.15;}
+.nav-brand-text b{display:block;font-family:var(--display);font-size:17px;color:var(--gold);letter-spacing:.5px;font-weight:900;}
+.nav-brand-text small{display:block;font-size:9px;color:rgba(255,255,255,.45);letter-spacing:2.5px;text-transform:uppercase;margin-top:1px;}
+.nav-tabs{display:flex;flex:1;}
+.nav-tab{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:0 20px;cursor:pointer;
+  font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:rgba(255,255,255,.45);
+  border-bottom:3px solid transparent;
+  transition:all .2s;min-height:62px;
+}
+.nav-tab:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.04);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-tab .ti{font-size:18px;}
+
+/* ── PAGES ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── LOGIN ── */
+.login-page{
+  min-height:calc(100vh - 62px);
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,var(--navy) 0%,var(--navy3) 100%);
+  padding:40px 20px;
+  position:relative;overflow:hidden;
+}
+.login-page::before{
+  content:'⚙';position:absolute;font-size:500px;
+  color:rgba(255,255,255,.025);top:-120px;right:-100px;
+  line-height:1;pointer-events:none;
+}
+.login-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  padding:48px 44px;width:100%;max-width:440px;
+  box-shadow:0 30px 80px rgba(0,0,0,.3);
+  position:relative;
+}
+.login-header{text-align:center;margin-bottom:36px;}
+.login-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--orange);margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+}
+.login-header h2{font-family:var(--display);font-size:28px;font-weight:900;color:var(--navy);letter-spacing:.5px;}
+.login-header p{font-size:13px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1.5px;}
+
+/* ── FORMS ── */
+.fg{margin-bottom:18px;}
+.fg label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:7px;}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  font-family:var(--font);font-size:15px;color:var(--text);
+  background:var(--white);outline:none;transition:border .18s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--orange);}
+.fg input[readonly]{background:#F8F9FC;color:var(--muted);}
+.fg textarea{resize:vertical;min-height:60px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row4{display:grid;grid-template-columns:2.5fr 1fr 1fr 1.2fr;gap:10px;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border:none;border-radius:var(--radius);cursor:pointer;
+  font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;transition:all .2s;white-space:nowrap;
+}
+.btn-block{width:100%;}
+.btn-primary{background:var(--orange);color:#fff;}
+.btn-primary:hover{background:#C94708;transform:translateY(-1px);}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-navy:hover{background:var(--navy2);}
+.btn-outline{background:transparent;color:var(--orange);border:2px solid var(--orange);}
+.btn-outline:hover{background:var(--orange);color:#fff;}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);}
+.btn-ghost:hover{background:rgba(255,255,255,.2);}
+.btn-sm{padding:8px 14px;font-size:13px;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-success{background:var(--success);color:#fff;}
+
+/* ── ALERTS ── */
+.alert{border-radius:var(--radius);padding:12px 16px;font-size:14px;margin-bottom:16px;}
+.alert-danger{background:var(--danger-bg);color:var(--danger);}
+.alert-success{background:var(--success-bg);color:var(--success);}
+.alert-info{background:#E8F0FE;color:#1A56A0;}
+
+/* ── PAGE HEADER ── */
+.pg-header{
+  background:var(--navy);padding:28px 40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.pg-header-left h1{font-family:var(--display);font-size:30px;font-weight:900;color:var(--gold);letter-spacing:.5px;}
+.pg-header-left p{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:1px;}
+.pg-header-actions{display:flex;gap:10px;align-items:center;}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:0;
+}
+.stat-item{
+  padding:18px 24px;border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none;}
+.stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:5px;}
+.stat-val{font-family:var(--display);font-size:28px;font-weight:900;color:var(--navy);}
+.stat-val.c-orange{color:var(--orange);}
+.stat-val.c-gold{color:var(--gold);}
+.stat-val.c-success{color:var(--success);}
+
+/* ── CONTENT GRID ── */
+.content-grid{
+  display:grid;grid-template-columns:440px 1fr;
+  gap:28px;padding:28px 40px;align-items:start;
+}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;}
+.card-header{
+  padding:18px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.card-header h3{font-family:var(--display);font-size:18px;font-weight:800;color:var(--navy);letter-spacing:.3px;}
+.card-body{padding:24px;}
+
+/* ── BADGE ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;}
+.badge-orange{background:var(--orange);color:#fff;}
+.badge-basic{background:#EEF2FF;color:#3730A3;}
+.badge-premium{background:#FEF3C7;color:#92400E;}
+.badge-admin{background:#FCE8E8;color:#911;}
+.badge-navy{background:var(--navy);color:#fff;}
+
+/* ── PLAN SELECTOR ── */
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.plan-opt{
+  border:2px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;cursor:pointer;transition:all .2s;position:relative;
+}
+.plan-opt input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+.plan-opt:hover{border-color:var(--orange);}
+.plan-opt.sel{border-color:var(--orange);background:#FFF5EF;}
+.plan-opt-name{font-family:var(--display);font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.plan-opt-price{font-size:20px;font-weight:700;color:var(--orange);font-family:var(--display);}
+.plan-opt-price small{font-size:12px;color:var(--muted);font-family:var(--font);font-weight:400;}
+
+/* ── RECEIPTS LIST ── */
+.receipts-list{max-height:520px;overflow-y:auto;}
+.ri{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;gap:12px;
+}
+.ri:hover{background:var(--bg);}
+.ri:last-child{border-bottom:none;}
+.ri-no{font-family:var(--display);font-size:20px;font-weight:900;color:var(--orange);min-width:52px;}
+.ri-name{font-size:14px;font-weight:700;color:var(--navy);}
+.ri-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.ri-amount{font-family:var(--display);font-size:18px;font-weight:800;color:var(--navy);text-align:right;white-space:nowrap;}
+.empty-state{padding:56px 24px;text-align:center;color:var(--muted);font-size:14px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(10,20,45,.65);z-index:1000;
+  align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(3px);
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--white);border-radius:var(--radius-lg);
+  width:100%;max-height:93vh;overflow-y:auto;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+.modal-sm{max-width:480px;}
+.modal-md{max-width:680px;}
+.modal-lg{max-width:820px;}
+.modal-header{
+  padding:20px 28px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:2;
+}
+.modal-header h3{font-family:var(--display);font-size:20px;font-weight:800;color:var(--navy);}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px;}
+.modal-body{padding:28px;}
+.modal-footer{padding:0 28px 28px;display:flex;gap:12px;justify-content:flex-end;}
+
+/* ── RECEIPT DOCUMENT ── */
+.rdoc{
+  font-family:Arial,Helvetica,sans-serif;
+  border:1px solid #ccc;border-radius:8px;overflow:hidden;
+  font-size:12px;color:#111;
+}
+.rdoc-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:18px 20px 14px;border-bottom:2px solid #111;
+  gap:20px;
+}
+.rdoc-brand{display:flex;align-items:center;gap:12px;}
+.rdoc-gear{font-size:52px;line-height:1;color:#E8580A;}
+.rdoc-brand-text h2{
+  font-family:'Barlow Condensed',Arial,sans-serif;
+  font-size:24px;font-weight:900;color:#E8580A;
+  letter-spacing:.5px;line-height:1.1;text-transform:uppercase;
+}
+.rdoc-brand-text p{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-top:2px;}
+.rdoc-no-box{text-align:right;}
+.rdoc-no-label{
+  background:#888;color:#fff;
+  font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  padding:6px 18px;border-radius:4px;display:inline-block;margin-bottom:6px;
+}
+.rdoc-no-val{
+  font-family:'Barlow Condensed',Arial,sans-serif;
+  font-size:36px;font-weight:900;color:#0D1F3C;
+  letter-spacing:2px;line-height:1;display:block;
+}
+.rdoc-table{width:100%;border-collapse:collapse;}
+.rdoc-table td{border:1px solid #bbb;padding:8px 12px;font-size:12px;vertical-align:middle;}
+.rdoc-th{background:#E8E8E8;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;color:#444;}
+.rdoc-amount-row{padding:12px 20px;border-bottom:1px solid #ccc;}
+.rdoc-amount-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:4px;}
+.rdoc-amount-val{
+  font-size:15px;font-weight:700;color:#0D1F3C;
+  border:1.5px solid #0D1F3C;border-radius:4px;
+  padding:8px 14px;min-height:56px;
+}
+.rdoc-concept{padding:14px 20px;border-bottom:1px solid #ccc;}
+.rdoc-concept-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:10px;}
+.rdoc-plans{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rdoc-plan{border:1.5px solid #bbb;border-radius:6px;padding:12px 14px;}
+.rdoc-plan.active{border-color:#E8580A;background:#FFF5EF;}
+.rdoc-plan-title{
+  font-family:'Barlow Condensed',Arial,sans-serif;
+  font-size:16px;font-weight:900;color:#0D1F3C;
+  margin-bottom:8px;display:flex;align-items:center;gap:8px;
+}
+.rdoc-plan-circle{
+  width:18px;height:18px;border-radius:50%;border:2px solid;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.rdoc-plan-circle.filled{background:#E8580A;border-color:#E8580A;}
+.rdoc-plan-circle.empty{border-color:#bbb;}
+.rdoc-plan ul{font-size:10.5px;padding-left:16px;line-height:1.75;color:#333;}
+.rdoc-footer{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid #ccc;
+}
+.rdoc-footer-note{font-size:10px;color:#666;max-width:320px;line-height:1.5;}
+.rdoc-footer-copies{text-align:right;font-size:10px;font-weight:700;line-height:1.8;}
+.rdoc-footer-copies .orig{color:#E8580A;}
+.rdoc-footer-copies .dupl{color:#0D1F3C;}
+
+/* ── SPONSOR PAGE ── */
+.sponsor-hero{
+  background:var(--navy);
+  padding:56px 40px 48px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.sponsor-hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.012) 40px,rgba(255,255,255,.012) 80px);
+}
+.sponsor-hero-icon{
+  font-size:52px;margin-bottom:12px;display:block;
+  animation:spin-slow 20s linear infinite;
+}
+@keyframes spin-slow{to{transform:rotate(360deg);}}
+.sponsor-hero h1{
+  font-family:var(--display);font-size:48px;font-weight:900;
+  color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:6px;
+}
+.sponsor-hero h2{
+  font-family:var(--display);font-size:22px;font-weight:600;
+  color:rgba(255,255,255,.65);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;
+}
+.sponsor-hero p{font-size:15px;color:rgba(255,255,255,.5);max-width:480px;margin:0 auto;}
+.sponsor-wrap{max-width:640px;margin:0 auto;padding:40px 24px;}
+
+/* ── VERIFY CARD ── */
+.verify-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;margin-bottom:24px;}
+
+/* ── WELCOME ── */
+.welcome-section{display:none;}
+.welcome-section.show{display:block;}
+.welcome-banner{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);
+  border-radius:var(--radius-lg);padding:36px 32px;text-align:center;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.welcome-banner::after{
+  content:'✓';position:absolute;font-size:160px;color:rgba(255,255,255,.03);
+  right:-20px;top:-30px;line-height:1;
+}
+.welcome-check{
+  width:64px;height:64px;border-radius:50%;background:var(--success);
+  margin:0 auto 16px;display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:#fff;
+}
+.welcome-banner h2{font-family:var(--display);font-size:32px;font-weight:900;color:var(--gold);letter-spacing:.5px;margin-bottom:6px;}
+.welcome-banner p{color:rgba(255,255,255,.7);font-size:15px;}
+.welcome-banner .receipt-tag{
+  display:inline-block;background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);
+  border-radius:6px;padding:5px 14px;font-size:13px;font-weight:600;margin-top:12px;
+}
+
+/* ── PLAN INFO ── */
+.plan-info-box{
+  background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);
+  padding:24px;margin-bottom:24px;
+}
+.plan-info-box h3{
+  font-family:var(--display);font-size:20px;font-weight:800;color:var(--navy);
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.plan-info-box ul{list-style:none;}
+.plan-info-box li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:7px 0;font-size:14px;color:var(--text);
+  border-bottom:1px solid var(--border);
+}
+.plan-info-box li:last-child{border-bottom:none;}
+.plan-check{color:var(--orange);font-weight:900;font-size:15px;flex-shrink:0;margin-top:1px;}
+
+/* ── UPLOAD ── */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:var(--radius-lg);
+  padding:30px 20px;text-align:center;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;background:var(--bg);
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:#FFF5EF;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone-icon{font-size:36px;margin-bottom:10px;}
+.upload-zone h4{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.upload-zone p{font-size:12px;color:var(--muted);}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px;}
+.preview-thumb{
+  aspect-ratio:1;border-radius:var(--radius);overflow:hidden;
+  border:1.5px solid var(--border);background:var(--bg);position:relative;
+}
+.preview-thumb img{width:100%;height:100%;object-fit:cover;}
+.preview-thumb .remove-btn{
+  position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;border:none;cursor:pointer;
+  font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1;
+}
+
+/* ── USER MANAGER ── */
+.user-table{width:100%;border-collapse:collapse;}
+.user-table th,.user-table td{padding:11px 16px;text-align:left;border-bottom:1px solid var(--border);font-size:14px;}
+.user-table th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);background:var(--bg);}
+.user-table tr:last-child td{border-bottom:none;}
+.user-table .user-actions{display:flex;gap:8px;}
+
+/* ── GUIDE ── */
+.guide-step{
+  background:var(--bg);border-radius:var(--radius);
+  padding:16px 20px;margin-bottom:14px;border-left:4px solid var(--orange);
+}
+.guide-step h4{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.guide-step p,.guide-step li{font-size:13px;color:var(--text);line-height:1.7;}
+.guide-step ul{padding-left:18px;}
+.code-block{
+  background:var(--navy);color:#A8D8FF;border-radius:8px;
+  padding:14px 16px;font-family:monospace;font-size:11.5px;
+  white-space:pre-wrap;line-height:1.6;margin-top:10px;overflow-x:auto;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--navy);color:#fff;
+  padding:14px 22px;border-radius:var(--radius);
+  font-size:14px;font-weight:600;z-index:9999;
+  transform:translateY(90px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;max-width:340px;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .content-grid{grid-template-columns:1fr;padding:20px;}
+  .pg-header{padding:20px;}
+  .row4{grid-template-columns:1fr 1fr;}
+  .stats-bar{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .nav-brand{display:none;}
+  .plan-grid{grid-template-columns:1fr;}
+  .rdoc-plans{grid-template-columns:1fr;}
+  .row2,.row4{grid-template-columns:1fr;}
+  .sponsor-hero{padding:36px 20px 30px;}
+  .sponsor-hero h1{font-size:36px;}
+}
+/* ── HERO COUNTDOWN ── */
+.info-pill{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:8px 20px;font-size:13px;color:rgba(255,255,255,.75);margin-bottom:16px;}
+.info-pill span{color:rgba(255,255,255,.35);}
+.countdown-wrap{display:inline-flex;align-items:center;gap:6px;background:rgba(13,31,60,.6);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:10px 20px;flex-wrap:wrap;justify-content:center;}
+.cd-label{font-family:var(--display);font-size:12px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;margin-right:6px;}
+.cd-block{text-align:center;min-width:44px;}
+.cd-num{font-family:var(--display);font-size:26px;font-weight:900;color:var(--white);line-height:1;display:block;}
+.cd-unit{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.cd-sep{font-family:var(--display);font-size:22px;color:var(--orange);font-weight:900;padding-bottom:8px;}
+.hero-sub1{font-family:var(--display);font-size:clamp(12px,2.5vw,16px);font-weight:600;color:var(--orange);letter-spacing:4px;text-transform:uppercase;margin-bottom:4px;}
 </style>
 </head>
 <body>
 
-<nav>
-  <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" class="nav-logo" alt="Logo IV Congreso">
+<nav style="background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:58px;box-shadow:0 3px 20px rgba(13,31,60,.35);position:sticky;top:0;z-index:200;">
+  <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:42px;width:auto;object-fit:contain;" alt="Logo">
 </nav>
 
-<div class="container">
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1000px; margin: 0 auto;">
-    
-    <div class="card">
-      <h2 style="font-family:var(--display); font-weight:900; color:var(--navy); margin-bottom:20px; text-transform:uppercase;">1. Verificar Registro</h2>
-      <div style="margin-bottom:20px;">
-        <label style="display:block; font-family:var(--display); font-weight:700; font-size:14px; margin-bottom:8px; color:var(--navy); text-transform:uppercase;">Nombre del Patrocinador</label>
-        <input type="text" id="v-patron" placeholder="Ej: Mi Empresa S.A." style="width:100%; padding:14px; border:1px solid var(--border); border-radius:var(--radius); font-size:16px;">
+<div class="sponsor-hero">
+    <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:150px;width:auto;display:block;margin:0 auto 16px;object-fit:contain;background:transparent;" alt="Logo">
+    <!-- ESTE TEXTO ESTA COMO COMENTARIO EN VEZ DE EL SE COLOCA EL LOGO DE INDUSTRIAL-->
+    <!-- <div class="sponsor-hero" style="padding:28px 24px 24px;">
+  <h1 style="font-family:var(--display);font-size:clamp(32px,7vw,54px);font-weight:900;color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:4px;">IV CONGRESO</h1>
+  <div class="hero-sub1">Con énfasis en Logística</div>
+  <h2 style="font-family:var(--display);font-size:clamp(16px,3.5vw,22px);font-weight:700;color:rgba(255,255,255,.85);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">Ingeniería Industrial</h2>-->
+  <div class="info-pill">
+    📍 Hotel Puerto Libre, Puerto Barrios <span>·</span> 25 de Abril, 2026
+  </div>
+  <div class="countdown-wrap">
+    <span class="cd-label">Faltan</span>
+    <div class="cd-block"><span class="cd-num" id="cd-d">--</span><div class="cd-unit">Días</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-block"><span class="cd-num" id="cd-h">--</span><div class="cd-unit">Hrs</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-block"><span class="cd-num" id="cd-m">--</span><div class="cd-unit">Min</div></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-block"><span class="cd-num" id="cd-s">--</span><div class="cd-unit">Seg</div></div>
+  </div>
+  <p style="margin-top:14px;font-size:13px;color:rgba(255,255,255,.5);">Portal oficial de verificación y registro de material para patrocinadores</p>
+</div>
+
+  
+
+  <div class="sponsor-wrap">
+    <!-- VERIFY SECTION -->
+    <div id="sp-verify-section">
+      <div class="verify-card">
+        <div class="card-header">
+          <h3>🔍 Verificar mi Patrocinio</h3>
+        </div>
+        <div class="card-body">
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">
+            Ingresa los datos <strong>exactamente</strong> como aparecen en tu recibo para verificar tu patrocinio.
+          </p>
+          <div class="fg">
+            <label>Nombre del Patrocinador (tal como aparece en el recibo)</label>
+            <input type="text" id="sp-name" placeholder="Nombre exacto de la empresa o persona">
+          </div>
+          <div class="fg">
+            <label>Número de Recibo</label>
+            <input type="text" id="sp-recibo" placeholder="Ej: 001" maxlength="10"
+                   onkeydown="if(event.key==='Enter')verifySponsor()">
+          </div>
+          <div id="sp-err" class="alert alert-danger" style="display:none;"></div>
+          <button class="btn btn-navy btn-block" onclick="verifySponsor()">Verificar mi patrocinio →</button>
+        </div>
       </div>
-      <div style="margin-bottom:25px;">
-        <label style="display:block; font-family:var(--display); font-weight:700; font-size:14px; margin-bottom:8px; color:var(--navy); text-transform:uppercase;">No. de Recibo</label>
-        <input type="text" id="v-no" placeholder="001" style="width:100%; padding:14px; border:1px solid var(--border); border-radius:var(--radius); font-size:16px;">
+
+      <!-- PLAN INFO CARDS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;">
+        <div class="card" style="border-top:4px solid var(--orange);">
+          <div class="card-body" style="padding:18px;">
+            <div style="font-family:var(--display);font-size:18px;font-weight:900;color:var(--navy);margin-bottom:4px;">Plan Básico</div>
+            <!--<div style="font-family:var(--display);font-size:22px;color:var(--orange);font-weight:900;margin-bottom:10px;">Q250.00</div>-->
+            <ul style="list-style:none;font-size:12px;color:var(--text);">
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Espacio en afiche</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Anuncio en redes sociales</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Espacio en manta vínilica</li>
+              <li style="padding:4px 0;">✓ Publicidad en pantalla (video, durante evento)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="border-top:4px solid var(--gold);">
+          <div class="card-body" style="padding:18px;">
+            <div style="font-family:var(--display);font-size:18px;font-weight:900;color:var(--navy);margin-bottom:4px;">Plan Premium</div>
+            <!--<div style="font-family:var(--display);font-size:22px;color:var(--gold);font-weight:900;margin-bottom:10px;">Q500.00</div>-->
+            <ul style="list-style:none;font-size:12px;color:var(--text);">
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Stand publicitario (2.0×1.50m)</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Espacio en afiche</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Anuncio en redes sociales</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Espacio en manta vínilica</li>
+              <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Publicidad en pantalla (video, antes y durante)</li>
+              <li style="padding:4px 0;">✓ Acceso a conferencias</li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <button class="btn-primary" onclick="verifyReceipt()">Verificar Datos</button>
     </div>
 
-    <div class="card" id="upload-section" style="opacity:0.5; pointer-events:none; transition: all 0.3s;">
-      <h2 id="welcome-msg" style="font-family:var(--display); font-weight:900; color:var(--navy); margin-bottom:20px; text-transform:uppercase;">2. Subir Material</h2>
-      <p style="font-size:14px; color:var(--muted); margin-bottom:20px;">Una vez verificado, podrás subir tu logo o material publicitario.</p>
-      <div style="border:2px dashed var(--border); padding:30px; text-align:center; border-radius:var(--radius); background:#fafafa; margin-bottom:25px;">
-        <input type="file" id="file-input" style="width:100%;">
+    <!-- WELCOME SECTION -->
+    <div class="welcome-section" id="sp-welcome-section">
+      <div class="welcome-banner">
+        <div class="welcome-check">✓</div>
+        <h2>¡Bienvenido!</h2>
+        <p id="sp-welcome-msg">Gracias por formar parte de nuestro Congreso</p>
+        <div class="receipt-tag" id="sp-welcome-tag"></div>
       </div>
-      <button class="btn-primary" id="btn-upload-file" onclick="processUpload()" style="background:var(--navy3);">Enviar Archivo</button>
-    </div>
 
+      <div class="plan-info-box" id="sp-plan-box">
+        <h3 id="sp-plan-title"></h3>
+        <ul id="sp-plan-list"></ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>📤 Subir Material Publicitario</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info" style="font-size:13px;margin-bottom:20px;">
+            El material que cargues será utilizado para la publicidad del evento según tu plan adquirido.
+            Asegúrate de subir archivos de buena calidad en horizontal (16:9) ya que el día del evento se mostrará en pantalla de 3x2 m.
+          </div>
+
+          <!-- LOGO -->
+          <div class="fg">
+            <label>Logotipo de la Empresa <span style="color:var(--danger);">*</span></label>
+            <div class="upload-zone" id="logo-zone">
+              <input type="file" accept=".png,.jpg,.jpeg" id="logo-input" onchange="handleLogo(event)">
+              <div class="upload-zone-icon">🖼</div>
+              <h4>Arrastra tu logotipo aquí o haz clic</h4>
+              <p>Formato PNG o JPG · Alta resolución recomendada · Máx. 5 MB</p>
+            </div>
+            <div id="logo-preview"></div>
+          </div>
+
+          <!-- PHOTOS -->
+          <div class="fg" style="margin-top:24px;">
+            <label>Fotografías de Actividades de la Empresa, sube archivos de buena calidad en horizontal (16:9) ya que el día del evento se mostrará en pantalla de 3x2 m. <span style="color:var(--danger);">*</span> <span style="color:var(--muted);font-size:11px;">(máximo 2)</span></label>
+            <div class="upload-zone" id="photos-zone">
+              <input type="file" accept=".png,.jpg,.jpeg" multiple id="photos-input" onchange="handlePhotos(event)">
+              <div class="upload-zone-icon">📸</div>
+              <h4>Arrastra tus 2 mejores fotografías o haz clic</h4>
+              <p>Actividades de la empresa · PNG o JPG · Máx. 5 MB c/u</p>
+            </div>
+            <div class="preview-grid" id="photos-preview"></div>
+            <p id="photos-count-msg" style="font-size:12px;color:var(--muted);margin-top:8px;"></p>
+          </div>
+
+          <div id="upload-err" class="alert alert-danger" style="display:none;margin-top:16px;"></div>
+          <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
+            <button class="btn btn-primary" style="flex:1;" onclick="submitMaterial()">
+              ✅ Enviar material →
+            </button>
+            <button class="btn btn-outline" onclick="resetSponsor()">← Verificar otro</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div id="toast"></div>
+<!-- ════ MODAL: EDIT RECEIPT ════ -->
+<div class="modal-overlay" id="modal-edit-receipt">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h3>✏ Editar Recibo <span id="edit-receipt-no-label"></span></h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-receipt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-no">
+      <div class="fg">
+        <label>Nombre del Patrocinador</label>
+        <input type="text" id="edit-patron" placeholder="Nombre exacto">
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Lugar</label>
+          <input type="text" id="edit-lugar">
+        </div>
+        <div class="fg">
+          <label>Fecha</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <select id="edit-dia" style="padding:11px 8px;font-size:14px;"><option value="">Día</option></select>
+            <select id="edit-mes" style="padding:11px 8px;font-size:14px;" onchange="updateEditDias()">
+              <option value="">Mes</option>
+              <option value="1">Enero</option><option value="2">Febrero</option>
+              <option value="3">Marzo</option><option value="4">Abril</option>
+              <option value="5">Mayo</option><option value="6">Junio</option>
+              <option value="7">Julio</option><option value="8">Agosto</option>
+              <option value="9">Septiembre</option><option value="10">Octubre</option>
+              <option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+            <select id="edit-anio" style="padding:11px 8px;font-size:14px;">
+              <option value="">Año</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Tipo de Plan</label>
+        <select id="edit-plan" onchange="onEditPlanChange()">
+          <option value="basico">Plan Básico — Q250.00</option>
+          <option value="premium">Plan Premium — Q500.00</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Monto (Q)</label>
+          <input type="number" id="edit-monto" step="0.01" oninput="document.getElementById('edit-letras').value=numToLetras(this.value)">
+        </div>
+        <div class="fg">
+          <label>Monto en letras</label>
+          <input type="text" id="edit-letras" readonly>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Observaciones</label>
+        <textarea id="edit-obs" rows="2"></textarea>
+      </div>
+      <div id="edit-receipt-err" class="alert alert-danger" style="display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-receipt')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditReceipt()">💾 Guardar cambios</button>
+    </div>
+  </div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-// URL de tu Apps Script (Mantenla actualizada)
-const sheetsUrl = "https://script.google.com/macros/s/1feN_k3g4mcE01Fl4Jm8Xa8iDHtwne4-K/exec"; 
+// ── Config ──
+var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw8LUW7PPFWXLtgXg5T7dPhaI9vcLTy5AhIj4y776W-52yLXsE52HKdADtscU_zDvhWpA/exec';
+var DB = {
+  get: function(k,def){ try{ var v=localStorage.getItem('iv4_'+k); return v!==null?JSON.parse(v):def; }catch(e){return def;} },
+  set: function(k,v){ try{ localStorage.setItem('iv4_'+k,JSON.stringify(v)); }catch(e){} }
+};
+var receipts = DB.get('receipts',[]);
+var sheetsUrl = DB.get('sheets_url','') || SHEETS_URL_DEFAULT;
+var logoFile = null;
+var photoFiles = [];
 
-let verifiedSponsorName = "";
+// ── Sanitiza fecha sin importar cómo llegó guardada ──
+function sanitizeFecha(r){
+  var dia=r.dia, mes=r.mes, anio=r.anio;
+  var MESES_NOM=['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-async function verifyReceipt() {
-  const patron = document.getElementById('v-patron').value.trim();
-  const no = document.getElementById('v-no').value.trim();
+  // Si dia parece una fecha completa (más de 2 chars y no es número puro)
+  if(dia && (String(dia).length > 2 || isNaN(parseInt(dia)))) {
+    // Intentar parsear desde el string completo
+    var d = new Date(String(dia));
+    if(!isNaN(d.getTime())) {
+      dia  = d.getDate();
+      mes  = d.getMonth() + 1;
+      anio = d.getFullYear();
+    }
+  }
+  // Si mes parece nombre de mes en inglés (Jan, Feb, Mar...)
+  var MESES_EN=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  if(mes && isNaN(parseInt(mes))) {
+    var idx = MESES_EN.indexOf(String(mes).toLowerCase().slice(0,3));
+    if(idx !== -1) mes = idx + 1;
+  }
+  // Si anio tiene más de 4 dígitos, limpiar
+  if(String(anio).length > 4) {
+    var d2 = new Date(r.dia);
+    if(!isNaN(d2.getTime())) anio = d2.getFullYear();
+  }
+  return {
+    dia:  parseInt(dia)  || '',
+    mes:  parseInt(mes)  || '',
+    anio: parseInt(anio) || '',
+    mesNom: MESES_NOM[parseInt(mes)] || mes || ''
+  };
+}
+var PLANS={
+  basico:{
+    label:'Plan Básico',price:'Q250.00',
+    items:['Espacio en afiche','Anuncio en redes sociales (en toda la publicidad hasta el día del evento)','Espacio en manta vínilica','Publicidad en pantalla (en video, durante el evento)']
+  },
+  premium:{
+    label:'Plan Premium',price:'Q500.00',
+    items:['Stand publicitario (2.0×1.50m)','Espacio en afiche','Anuncio en redes sociales (en toda la publicidad hasta el día del evento)','Espacio en manta vínilica','Publicidad en pantalla (en video, antes y durante el evento)','Acceso a las conferencias (no incluye alimentación)']
+  }
+};
 
-  if(!patron || !no) {
-    showToast('⚠️ Por favor completa ambos campos');
+// ══════════════════════════════════════════
+// SPONSOR VERIFICATION
+// ══════════════════════════════════════════
+function verifySponsor(){
+  var name=document.getElementById('sp-name').value.trim();
+  var rawNo=document.getElementById('sp-recibo').value.trim();
+  var no=rawNo.padStart(3,'0');
+  var err=document.getElementById('sp-err');
+  var btn=document.querySelector('#sp-verify-section .btn-navy');
+  if(!name||!rawNo){err.style.display='block';err.textContent='Por favor ingresa tu nombre y número de recibo.';return;}
+
+  // 1) Check local cache first
+  var found=receipts.find(function(r){return r.no===no&&r.patron.trim()===name;});
+  if(found){err.style.display='none';showWelcome(found);return;}
+
+  // 2) Query Google Sheets via Apps Script (any device)
+  if(!sheetsUrl){
+    err.style.display='block';
+    err.textContent='No se encontró el patrocinio. Contacta a tesorería para verificar tu registro.';
     return;
   }
 
-  try {
-    const res = await fetch(`${sheetsUrl}?action=verify&no=${no.padStart(3,'0')}&patron=${encodeURIComponent(patron)}`);
-    const data = await res.json();
+  btn.textContent='Verificando...';
+  btn.disabled=true;
+  err.style.display='none';
 
-    if(data.found) {
-      verifiedSponsorName = data.patrocinador; // Guardamos el nombre oficial
-      showToast('✅ Registro verificado correctamente');
-      
-      // Habilitar sección de carga
-      const section = document.getElementById('upload-section');
-      section.style.opacity = "1";
-      section.style.pointerEvents = "auto";
-      document.getElementById('welcome-msg').textContent = "HOLA, " + verifiedSponsorName;
-    } else {
-      showToast('❌ No se encontró el registro. Revisa los datos.');
-    }
+  // Apps Script doGet returns JSON with CORS headers when deployed as "Anyone"
+  // We use a script tag injection (JSONP-style) to bypass any remaining CORS issues
+  var cbName='_iv4cb_'+Date.now();
+  var script=document.createElement('script');
+  var timeout=setTimeout(function(){
+    // Fallback: try plain fetch if JSONP fails
+    script.remove();
+    delete window[cbName];
+    var url=sheetsUrl+'?action=verify&no='+encodeURIComponent(no)+'&patron='+encodeURIComponent(name);
+    fetch(url,{method:'GET',headers:{'Accept':'application/json'}})
+      .then(function(res){return res.json();})
+      .then(function(data){handleVerifyResponse(data,name,no,btn,err);})
+      .catch(function(){
+        btn.textContent='Verificar mi patrocinio →';
+        btn.disabled=false;
+        err.style.display='block';
+        err.textContent='Error de conexión. Verifica tu internet e intenta de nuevo.';
+      });
+  },8000);
+
+  window[cbName]=function(data){
+    clearTimeout(timeout);
+    script.remove();
+    delete window[cbName];
+    handleVerifyResponse(data,name,no,btn,err);
+  };
+
+  // Try plain fetch first — works when CORS is properly configured
+  var url=sheetsUrl+'?action=verify&no='+encodeURIComponent(no)+'&patron='+encodeURIComponent(name);
+  fetch(url)
+    .then(function(res){
+      clearTimeout(timeout);
+      script.remove();
+      delete window[cbName];
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
+    })
+    .then(function(data){handleVerifyResponse(data,name,no,btn,err);})
+    .catch(function(){
+      // fetch failed, wait for JSONP timeout fallback or try again
+      clearTimeout(timeout);
+      script.remove();
+      delete window[cbName];
+      btn.textContent='Verificar mi patrocinio →';
+      btn.disabled=false;
+      err.style.display='block';
+      err.textContent='No se pudo conectar con el servidor. Verifica tu URL de Google en configuración.';
+    });
+}
+
+function handleVerifyResponse(data,name,no,btn,err){
+  btn.textContent='Verificar mi patrocinio →';
+  btn.disabled=false;
+  if(data&&data.found){
+    var r={
+      no:     data.no||no,
+      patron: data.patrocinador||name,
+      lugar:  data.lugar||'',
+      dia:    data.dia||'',
+      mes:    data.mes||'',
+      anio:   data.anio||'',
+      monto:  String(data.monto||''),
+      letras: data.letras||'',
+      plan:   (data.plan||'basico').toLowerCase().trim(),
+      obs:    data.obs||''
+    };
+    var existing=receipts.find(function(x){return x.no===r.no;});
+    if(!existing){receipts.push(r);DB.set('receipts',receipts);}
+    err.style.display='none';
+    showWelcome(r);
+  } else {
+    err.style.display='block';
+    err.textContent='No se encontró ningún patrocinio con esos datos. Verifica que el nombre sea exactamente igual al del recibo, o contacta a tesorería.';
   }
+}
+
+function showWelcome(r){
+  document.getElementById('sp-verify-section').style.display='none';
+  var ws=document.getElementById('sp-welcome-section');
+  ws.classList.add('show');
+  document.getElementById('sp-welcome-msg').textContent='¡Bienvenido/a, '+r.patron+'! Gracias por formar parte de nuestro Congreso.';
+  document.getElementById('sp-welcome-tag').textContent='Recibo No. '+r.no+' · Plan '+PLANS[r.plan].label;
+  var plan=PLANS[r.plan];
+  document.getElementById('sp-plan-title').innerHTML=(r.plan==='basico'?'⬜':'⭐')+' '+plan.label+' — '+plan.price;
+  document.getElementById('sp-plan-list').innerHTML=plan.items.map(i=>'<li><span class="plan-check">✓</span>'+i+'</li>').join('');
+  window._currentSponsorReceipt=r;
+}
+
+function resetSponsor(){
+  document.getElementById('sp-verify-section').style.display='block';
+  document.getElementById('sp-welcome-section').classList.remove('show');
+  document.getElementById('sp-name').value='';
+  document.getElementById('sp-recibo').value='';
+  document.getElementById('sp-err').style.display='none';
+  document.getElementById('logo-preview').innerHTML='';
+  document.getElementById('photos-preview').innerHTML='';
+  document.getElementById('logo-input').value='';
+  document.getElementById('photos-input').value='';
+  document.getElementById('photos-count-msg').textContent='';
+  document.getElementById('upload-err').style.display='none';
+  logoFile=null; photoFiles=[];
+  window._currentSponsorReceipt=null;
+}
+// ══════════════════════════════════════════
+// UPLOADS
+// ══════════════════════════════════════════
+function handleLogo(e){
+  var file=e.target.files[0]; if(!file) return;
+  if(file.size>5*1024*1024){ showToast('⚠ El logotipo excede 5 MB.'); return; }
+  logoFile=file;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    document.getElementById('logo-preview').innerHTML=`
+      <div style="margin-top:12px;display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:var(--radius);padding:10px 14px;border:1px solid var(--border);">
+        <img src="${ev.target.result}" style="height:60px;max-width:120px;object-fit:contain;border-radius:4px;border:1px solid var(--border);">
+        <div><div style="font-size:13px;font-weight:700;color:var(--navy);">${file.name}</div>
+        <div style="font-size:12px;color:var(--muted);">${(file.size/1024).toFixed(0)} KB</div></div>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handlePhotos(e){
+  var files=Array.from(e.target.files).slice(0,2);
+  photoFiles=files;
+  var grid=document.getElementById('photos-preview');
+  grid.innerHTML='';
+  var count=0;
+  files.forEach(function(file){
+    if(file.size>5*1024*1024){ showToast('⚠ '+file.name+' excede 5 MB.'); return; }
+    count++;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var d=document.createElement('div');
+      d.className='preview-thumb';
+      d.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">';
+      grid.appendChild(d);
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('photos-count-msg').textContent=count+' fotografía'+(count!==1?'s':'')+' seleccionada'+(count!==1?'s':'')+(count<2?' (se recomienda subir 2)':'');
+}
+
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    var r=new FileReader();
+    r.onload=function(e){ res(e.target.result.split(',')[1]); };
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function submitMaterial(){
+  var err=document.getElementById('upload-err');
+  if(!logoFile){ err.style.display='block'; err.textContent='Por favor sube el logotipo de tu empresa.'; return; }
+  if(!photoFiles||photoFiles.length<1){ err.style.display='block'; err.textContent='Por favor sube al menos una fotografía de actividades.'; return; }
+  err.style.display='none';
+  var r=window._currentSponsorReceipt;
+  var sponsorName=r?r.patron:'Patrocinador';
+
+  var promises=[];
+  promises.push(fileToBase64(logoFile).then(function(b64){
+    return sendFileToDrive(sponsorName, logoFile.name, b64, logoFile.type);
+  }));
+  photoFiles.forEach(function(f){
+    promises.push(fileToBase64(f).then(function(b64){
+      return sendFileToDrive(sponsorName, f.name, b64, f.type);
+    }));
+  });
+  Promise.all(promises).then(function(){
+    showToast('✓ Material enviado exitosamente. ¡Gracias!');
+    document.getElementById('upload-err').style.display='none';
+    document.querySelector('#sp-welcome-section .card .card-body').innerHTML=`
+      <div class="alert alert-success" style="text-align:center;padding:32px;font-size:16px;">
+        <div style="font-size:40px;margin-bottom:12px;">✅</div>
+        <strong>¡Material enviado exitosamente!</strong><br>
+        <span style="font-size:14px;color:var(--success);">Tu logotipo y fotografías han sido recibidos.<br>Serán utilizados en la publicidad del IV Congreso.</span>
+        <div style="margin-top:20px;">
+          <button class="btn btn-outline" onclick="resetSponsor()">← Verificar otro patrocinador</button>
+        </div>
+      </div>`;
+  }).catch(function(){
+    showToast('✓ Material recibido localmente. Configura Google Drive para envío automático.');
+  });
+}
+// ══════════════════════════════════════════
+// DRIVE UPLOAD
+// ══════════════════════════════════════════
+function sendFileToDrive(sponsor, filename, base64content, mimeType){
+  if(!sheetsUrl) return Promise.resolve();
+  var params = new URLSearchParams();
+  params.append('type',     'file');
+  params.append('sponsor',  sponsor);
+  params.append('filename', filename);
+  params.append('content',  base64content);
+  params.append('mimeType', mimeType);
+  return fetch(sheetsUrl, {method:'POST', mode:'no-cors', body:params})
+    .catch(function(){});
+}
+
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    var r = new FileReader();
+    r.onload = function(e){ res(e.target.result.split(',')[1]); };
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',function(e){
+  if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+});
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+var _toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){ t.classList.remove('show'); },3800);
+}
+
+// ── Cuenta regresiva ──
+var CD_TARGET = new Date('2026-04-25T08:00:00').getTime();
+function tickCD(){
+  var diff = CD_TARGET - Date.now();
+  if(diff <= 0){
+    var cw = document.querySelector('.countdown-wrap');
+    if(cw) cw.innerHTML = '<span style="color:var(--gold);font-family:var(--display);font-size:18px;font-weight:900;">¡El congreso ha comenzado!</span>';
+    return;
+  }
+  var d=Math.floor(diff/86400000);
+  var h=Math.floor((diff%86400000)/3600000);
+  var m=Math.floor((diff%3600000)/60000);
+  var s=Math.floor((diff%60000)/1000);
+  var el_d=document.getElementById('cd-d');
+  var el_h=document.getElementById('cd-h');
+  var el_m=document.getElementById('cd-m');
+  var el_s=document.getElementById('cd-s');
+  if(el_d) el_d.textContent=String(d).padStart(2,'0');
+  if(el_h) el_h.textContent=String(h).padStart(2,'0');
+  if(el_m) el_m.textContent=String(m).padStart(2,'0');
+  if(el_s) el_s.textContent=String(s).padStart(2,'0');
+}
+tickCD(); setInterval(tickCD, 1000);
+
+document.addEventListener('DOMContentLoaded', function(){
+  tickCD();
+});
+</script>
+</body>
+</html>
