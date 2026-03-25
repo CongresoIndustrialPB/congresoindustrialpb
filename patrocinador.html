@@ -950,11 +950,11 @@ function submitMaterial(){
 
   var promises=[];
   promises.push(fileToBase64(logoFile).then(function(b64){
-    return sendFileToDrive(receiptNo, logoFile.name, b64, logoFile.type);
+    return sendFileToDrive(sponsorName, logoFile.name, b64, logoFile.type);
   }));
   photoFiles.forEach(function(f){
     promises.push(fileToBase64(f).then(function(b64){
-      return sendFileToDrive(receiptNo, f.name, b64, f.type);
+      return sendFileToDrive(sponsorName, f.name, b64, f.type);
     }));
   });
   Promise.all(promises).then(function(){
@@ -978,7 +978,7 @@ function submitMaterial(){
 // ══════════════════════════════════════════
 // DRIVE UPLOAD
 // ══════════════════════════════════════════
-function sendFileToDrive(no, filename, base64content, mimeType){
+function sendFileToDrive(sponsor, filename, base64content, mimeType){
   if(!sheetsUrl) return Promise.resolve();
   // Use a hidden form POST - this bypasses no-cors restrictions
   // and allows Apps Script to read all parameters correctly
@@ -986,13 +986,13 @@ function sendFileToDrive(no, filename, base64content, mimeType){
     try {
       var form = document.createElement('form');
       form.method = 'POST';
-      form.action = sheetsUrl + '?no=' + encodeURIComponent(no);
+      form.action = sheetsUrl + '?patrocinador=' + encodeURIComponent(sponsor);
       form.target = 'upload_frame_' + Date.now();
       form.style.display = 'none';
 
       var fields = {
         type:     'file',
-        no:       no,
+        patrocinador: sponsor,
         filename: filename,
         content:  base64content,
         mimeType: mimeType
