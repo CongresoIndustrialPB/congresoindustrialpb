@@ -473,7 +473,7 @@ nav{
         <p id="dash-user-label">IV Congreso de Ingeniería Industrial · Puerto Barrios</p>
       </div>
       <div class="pg-header-actions">
-        <span id="admin-btns" style="display:none;gap:10px;display:none;">
+        <span id="admin-btns" style="display:none;gap:10px;">
           <button class="btn btn-ghost btn-sm" onclick="openUserMgr()">👥 Gestionar usuarios</button>
           <button class="btn btn-ghost btn-sm" onclick="openGuide()">📖 Guía Google</button>
           <button class="btn btn-sm" onclick="openResetModal()"
@@ -481,7 +481,7 @@ nav{
             🗑 Resetear sistema
           </button>
         </span>
-        <button class="btn btn-ghost btn-sm" onclick="doLogout()">Cerrar sesión</button>
+        <span id="sheets-state-txt" style="font-size:12px;color:rgba(255,255,255,.5);font-family:var(--display);letter-spacing:.5px;"></span><button id="admin-sheets-btn" class="btn btn-ghost btn-sm" onclick="openGuide()" style="display:none;">⚙ Google URL</button><button class="btn btn-ghost btn-sm" onclick="doLogout()">Cerrar sesión</button>
       </div>
     </div>
 
@@ -541,8 +541,8 @@ nav{
               </div>
             </div>
             <div class="alert alert-info" id="sheets-status-msg" style="font-size:13px;">
-              📊 Google Sheets: <strong id="sheets-state-txt">No configurado</strong>
-              <span id="admin-sheets-btn" style="display:none;">
+              📊 Google Sheets: <strong id="sheets-state-txt2">No configurado</strong>
+              <span id="admin-sheets-btn2" style="display:none;">
                 — <a href="#" onclick="openGuide()" style="color:inherit;font-weight:700;text-decoration:underline;">Configurar →</a>
               </span>
             </div>
@@ -637,6 +637,76 @@ nav{
       </div>
     </div>
   </div>
+
+<!-- ════ MODAL: EDIT RECEIPT ════ -->
+<div class="modal-overlay" id="modal-edit-receipt">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h3>✏ Editar Recibo <span id="edit-receipt-no-label"></span></h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-receipt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-no">
+      <div class="fg">
+        <label>Nombre del Patrocinador</label>
+        <input type="text" id="edit-patron" placeholder="Nombre exacto">
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Lugar</label>
+          <input type="text" id="edit-lugar">
+        </div>
+        <div class="fg">
+          <label>Fecha</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <select id="edit-dia" style="padding:11px 8px;font-size:14px;"><option value="">Día</option></select>
+            <select id="edit-mes" style="padding:11px 8px;font-size:14px;" onchange="updateEditDias()">
+              <option value="">Mes</option>
+              <option value="1">Enero</option><option value="2">Febrero</option>
+              <option value="3">Marzo</option><option value="4">Abril</option>
+              <option value="5">Mayo</option><option value="6">Junio</option>
+              <option value="7">Julio</option><option value="8">Agosto</option>
+              <option value="9">Septiembre</option><option value="10">Octubre</option>
+              <option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+            <select id="edit-anio" style="padding:11px 8px;font-size:14px;">
+              <option value="">Año</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Tipo de Plan</label>
+        <select id="edit-plan" onchange="onEditPlanChange()">
+          <option value="basico">Plan Básico — Q250.00</option>
+          <option value="premium">Plan Premium — Q500.00</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Monto (Q)</label>
+          <input type="number" id="edit-monto" step="0.01" oninput="document.getElementById('edit-letras').value=numToLetras(this.value)">
+        </div>
+        <div class="fg">
+          <label>Monto en letras</label>
+          <input type="text" id="edit-letras" readonly>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Observaciones</label>
+        <textarea id="edit-obs" rows="2"></textarea>
+      </div>
+      <div id="edit-receipt-err" class="alert alert-danger" style="display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-receipt')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditReceipt()">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
 
 <!-- ════ MODAL: RECEIPT ════ -->
 <div class="modal-overlay" id="modal-receipt">
@@ -950,36 +1020,7 @@ function doGet(e) {
 
 
 <!-- ════ MODAL: RESET ════ -->
-<div class="modal-overlay" id="modal-reset">
-  <div class="modal modal-sm">
-    <div class="modal-header" style="background:#FEE2E2;">
-      <h3 style="color:#991B1B;">⚠ Resetear Sistema</h3>
-      <button class="modal-close" onclick="closeModal('modal-reset')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="alert alert-danger" style="margin-bottom:20px;">
-        <strong>¡Esta acción es irreversible!</strong><br>
-        Se eliminarán <strong>TODOS</strong> los recibos del sistema local y de Google Sheets. El contador volverá a cero.
-      </div>
-      <p style="font-size:14px;color:var(--text);margin-bottom:20px;">
-        Para confirmar, escribe <strong>RESETEAR</strong> en el campo:
-      </p>
-      <div class="fg">
-        <label>Confirmación</label>
-        <input type="text" id="reset-confirm-input" placeholder="Escribe RESETEAR"
-          oninput="checkResetConfirm(this.value)" autocomplete="off">
-      </div>
-      <div id="reset-err" class="alert alert-danger" style="display:none;margin-top:12px;"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-reset')">Cancelar</button>
-      <button class="btn btn-danger" id="btn-confirm-reset" disabled
-        onclick="executeReset()" style="opacity:.4;cursor:not-allowed;">
-        🗑 Confirmar Reset Total
-      </button>
-    </div>
-  </div>
-</div>
+
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -1867,6 +1908,214 @@ function sendFileToDrive(sponsor,filename,base64content,mimeType){
   }).catch(function(){});
 }
 
+
+
+// ══════════════════════════════════════════
+// PLAN DATA
+// ══════════════════════════════════════════
+var PLANS={
+  basico:{
+    label:'Plan Básico',price:'Q250.00',
+    items:['Espacio en afiche','Anuncio en redes sociales (en toda la publicidad hasta el día del evento)','Espacio en manta vínilica','Publicidad en pantalla (en video, durante el evento)']
+  },
+  premium:{
+    label:'Plan Premium',price:'Q500.00',
+    items:['Stand publicitario (2.0×1.50m)','Espacio en afiche','Anuncio en redes sociales (en toda la publicidad hasta el día del evento)','Espacio en manta vínilica','Publicidad en pantalla (en video, antes y durante el evento)','Acceso a las conferencias (no incluye alimentación)']
+  }
+};
+var MESES=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// ══════════════════════════════════════════
+// RENDER RECEIPT DOC
+// ══════════════════════════════════════════
+function renderReceiptDoc(r){
+  var isBasic=r.plan==='basico';
+  var basicItems=PLANS.basico.items.map(function(i){return '<li>'+i+'</li>';}).join('');
+  var premItems=PLANS.premium.items.map(function(i){return '<li>'+i+'</li>';}).join('');
+  var fecha=sanitizeFecha(r);
+  var mesNom=fecha.mesNom;
+  var montoFmt='Q '+parseFloat(r.monto).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('receipt-doc').innerHTML=`
+  <div class="rdoc-top">
+    <div class="rdoc-brand">
+      <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:64px;width:auto;object-fit:contain;background:transparent;" alt="Logo IV Congreso">
+    </div>
+    <div class="rdoc-no-box">
+      <div class="rdoc-no-label">Recibo No.</div>
+      <span class="rdoc-no-val">${r.no}</span>
+    </div>
+  </div>
+  <table class="rdoc-table">
+    <tr>
+      <td class="rdoc-th" style="width:90px;">Lugar</td>
+      <td>${r.lugar}</td>
+      <td class="rdoc-th" style="width:40px;">Día</td>
+      <td style="width:50px;text-align:center;">${fecha.dia}</td>
+      <td class="rdoc-th" style="width:50px;">Mes</td>
+      <td style="width:100px;">${mesNom}</td>
+      <td class="rdoc-th" style="width:45px;">Año</td>
+      <td style="width:60px;">${fecha.anio}</td>
+    </tr>
+    <tr>
+      <td class="rdoc-th">Recibí de:</td>
+      <td colspan="4">${r.patron}</td>
+      <td class="rdoc-th">La cantidad de Q</td>
+      <td colspan="2" style="font-weight:700;font-size:14px;">${montoFmt}</td>
+    </tr>
+  </table>
+  <div class="rdoc-amount-row">
+    <div class="rdoc-amount-label">Cantidad (en letras):</div>
+    <div class="rdoc-amount-val">${r.letras}</div>
+  </div>
+  <div class="rdoc-concept">
+    <div class="rdoc-concept-label">Por concepto de:</div>
+    <div class="rdoc-plans">
+      <div class="rdoc-plan ${isBasic?'active':''}">
+        <div class="rdoc-plan-title">
+          <span class="rdoc-plan-circle ${isBasic?'filled':'empty'}"></span>
+          PLAN BÁSICO
+        </div>
+        <ul>${basicItems}</ul>
+      </div>
+      <div class="rdoc-plan ${!isBasic?'active':''}">
+        <div class="rdoc-plan-title">
+          <span class="rdoc-plan-circle ${!isBasic?'filled':'empty'}"></span>
+          PLAN PREMIUM
+        </div>
+        <ul>${premItems}</ul>
+      </div>
+    </div>
+    ${r.obs?'<p style="font-size:11px;color:#666;margin-top:10px;"><strong>Obs.:</strong> '+r.obs+'</p>':''}
+  </div>
+  <div class="rdoc-footer">
+    <div class="rdoc-footer-note">Su aporte como patrocinador sirve para contribuir los gastos inherentes del congreso.</div>
+    <div class="rdoc-footer-copies">
+      <span class="orig">Original: Patrocinador</span>
+      <span class="dupl">Duplicado: Organizadores</span>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// DOWNLOAD RECEIPT
+// ══════════════════════════════════════════
+function downloadReceipt(){
+  var r=currentReceipt; if(!r) return;
+  var content=document.getElementById('receipt-doc').innerHTML;
+  var w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<title>Recibo No. ${r.no} — IV Congreso</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Barlow,Arial,sans-serif;padding:30px;color:#111;font-size:12px;background:#fff;}
+.rdoc{border:1px solid #bbb;border-radius:6px;overflow:hidden;max-width:780px;margin:0 auto;}
+.rdoc-top{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 20px 14px;border-bottom:2px solid #111;gap:20px;}
+.rdoc-brand img{height:64px;width:auto;object-fit:contain;}
+.rdoc-no-box{text-align:right;}
+.rdoc-no-label{background:#888;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 18px;border-radius:4px;display:inline-block;margin-bottom:6px;}
+.rdoc-no-val{font-family:"Barlow Condensed",Arial,sans-serif;font-size:36px;font-weight:900;color:#0D1F3C;letter-spacing:2px;line-height:1;display:block;}
+.rdoc-table{width:100%;border-collapse:collapse;}
+.rdoc-table td{border:1px solid #bbb;padding:8px 12px;font-size:12px;vertical-align:middle;}
+.rdoc-th{background:#E8E8E8;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;color:#444;}
+.rdoc-amount-row{padding:12px 20px;border-bottom:1px solid #ccc;}
+.rdoc-amount-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:4px;}
+.rdoc-amount-val{font-size:15px;font-weight:700;color:#0D1F3C;border:1.5px solid #0D1F3C;border-radius:4px;padding:8px 14px;min-height:56px;}
+.rdoc-concept{padding:14px 20px;border-bottom:1px solid #ccc;}
+.rdoc-concept-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:10px;}
+.rdoc-plans{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rdoc-plan{border:1.5px solid #bbb;border-radius:6px;padding:12px 14px;}
+.rdoc-plan.active{border-color:#E8580A;background:#FFF5EF;}
+.rdoc-plan-title{font-family:"Barlow Condensed",Arial,sans-serif;font-size:16px;font-weight:900;color:#0D1F3C;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.rdoc-plan-circle{width:18px;height:18px;border-radius:50%;border:2px solid;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdoc-plan-circle.filled{background:#E8580A;border-color:#E8580A;}
+.rdoc-plan-circle.empty{border-color:#bbb;}
+.rdoc-plan ul{font-size:10.5px;padding-left:16px;line-height:1.75;color:#333;}
+.rdoc-footer{display:flex;align-items:flex-end;justify-content:space-between;padding:12px 20px;border-top:1px solid #ccc;}
+.rdoc-footer-note{font-size:10px;color:#666;max-width:320px;line-height:1.5;}
+.rdoc-footer-copies{text-align:right;font-size:10px;font-weight:700;line-height:1.8;}
+.orig{color:#E8580A;display:block;} .dupl{color:#0D1F3C;display:block;}
+@media print{@page{size:A4 landscape;margin:12mm;}body{padding:0;}}
+</style></head><body>
+<div class="rdoc">${content}</div>
+<script>window.onload=function(){window.print();};<\/script>
+</body></html>`);
+  w.document.close();
+}
+
+// ══════════════════════════════════════════
+// RECEIPTS LIST
+// ══════════════════════════════════════════
+function renderReceiptsList(){
+  var el=document.getElementById('receipts-list');
+  document.getElementById('list-count-badge').textContent=receipts.length+' registro'+(receipts.length!==1?'s':'');
+  if(!receipts.length){ el.innerHTML='<div class="empty-state">No hay recibos registrados aún.<br>Genera el primero con el formulario.</div>'; return; }
+  el.innerHTML=[...receipts].reverse().map(function(r){ return `
+    <div class="ri">
+      <div class="ri-no" onclick="viewReceipt('${r.no}')" style="cursor:pointer;">No.${r.no}</div>
+      <div style="flex:1;min-width:0;cursor:pointer;" onclick="viewReceipt('${r.no}')">
+        <div class="ri-name">${r.patron}</div>
+        <div class="ri-meta">${(function(){var f=sanitizeFecha(r);return f.dia+'/'+f.mes+'/'+f.anio;})()}&nbsp;·&nbsp;
+          <span class="badge ${r.plan==='basico'?'badge-basic':'badge-premium'}">${r.plan.toUpperCase()}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="ri-amount">Q ${parseFloat(r.monto).toLocaleString('es-GT',{minimumFractionDigits:2})}</div>
+        <button class="btn btn-navy btn-sm" onclick="openEditReceipt('${r.no}')" title="Editar recibo" style="flex-shrink:0;background:var(--navy2);">✏</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteReceipt('${r.no}')" title="Eliminar recibo" style="flex-shrink:0;">🗑</button>
+      </div>
+    </div>
+  `;}).join('');
+}
+
+function viewReceipt(no){
+  var r=receipts.find(function(x){return x.no===no;}); if(!r) return;
+  currentReceipt=r;
+  renderReceiptDoc(r);
+  document.getElementById('modal-receipt-no').textContent=r.no;
+  openModal('modal-receipt');
+}
+
+function updateStats(){
+  var basic=receipts.filter(function(r){return r.plan==='basico';});
+  var prem=receipts.filter(function(r){return r.plan==='premium';});
+  var total=receipts.reduce(function(s,r){return s+parseFloat(r.monto);},0);
+  document.getElementById('st-total').textContent=receipts.length;
+  document.getElementById('st-basic').textContent=basic.length;
+  document.getElementById('st-prem').textContent=prem.length;
+  document.getElementById('st-total-q').textContent='Q '+total.toLocaleString('es-GT',{minimumFractionDigits:2});
+  document.getElementById('st-last').textContent=receipts.length?'No.'+receipts[receipts.length-1].no:'—';
+}
+
+// ══════════════════════════════════════════
+// EDIT RECEIPT
+// ══════════════════════════════════════════
+function openEditReceipt(no){
+  var r=receipts.find(function(x){return x.no===no;});
+  if(!r) return;
+  document.getElementById('edit-no').value=r.no;
+  document.getElementById('edit-receipt-no-label').textContent='No.'+r.no;
+  document.getElementById('edit-patron').value=r.patron||'';
+  document.getElementById('edit-lugar').value=r.lugar||'';
+  document.getElementById('edit-plan').value=r.plan||'basico';
+  document.getElementById('edit-monto').value=parseFloat(r.monto)||'';
+  document.getElementById('edit-letras').value=r.letras||'';
+  document.getElementById('edit-obs').value=r.obs||'';
+  document.getElementById('edit-anio').value=r.anio||'';
+  document.getElementById('edit-mes').value=r.mes||'';
+  updateEditDias();
+  document.getElementById('edit-dia').value=r.dia||'';
+  document.getElementById('edit-receipt-err').style.display='none';
+  openModal('modal-edit-receipt');
+}
+
+function onEditPlanChange(){
+  var plan=document.getElementById('edit-plan').value;
+  var monto=plan==='basico'?250:500;
+  document.getElementById('edit-monto').value=monto.toFixed(2);
+  document.getElementById('edit-letras').value=numToLetras(monto);
+}
 
 // ══════════════════════════════════════════
 // RESET SYSTEM
