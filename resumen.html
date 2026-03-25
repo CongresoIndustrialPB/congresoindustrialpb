@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Resumen — Congreso II</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --azul:#0a1628;--azul2:#112240;--azul3:#1a3050;
+    --dorado:#c9a94b;--dorado2:#f0d080;
+    --verde:#1db96b;--rojo:#e74c3c;
+    --blanco:#f4f1ea;--gris:#8899aa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:var(--azul);font-family:'Barlow',sans-serif;color:var(--blanco);}
+
+  /* LOGIN */
+  #loginScreen{
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(ellipse 90% 60% at 50% 0%,rgba(201,169,75,.1) 0%,transparent 60%);
+  }
+  #loginScreen.hidden{display:none;}
+  .login-box{
+    background:var(--azul2);border:1px solid rgba(201,169,75,.3);
+    border-radius:6px;padding:40px 36px;width:100%;max-width:400px;
+    animation:fadeUp .6s ease both;
+  }
+  .login-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:3px;color:var(--dorado);margin-bottom:4px;}
+  .login-sub{font-size:.82rem;color:var(--gris);margin-bottom:28px;}
+
+  #mainScreen{display:none;min-height:100vh;}
+  #mainScreen.active{display:block;}
+
+  /* TOPBAR */
+  .topbar{
+    background:var(--azul2);border-bottom:1px solid rgba(201,169,75,.2);
+    padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  .topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--dorado);}
+  .topbar-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+
+  .content{max-width:1000px;margin:0 auto;padding:28px 20px;}
+
+  /* KPI Pills */
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;}
+  .kpi-card{
+    background:var(--azul2);border-radius:6px;padding:22px 24px;
+    border:1px solid rgba(201,169,75,.15);position:relative;overflow:hidden;
+  }
+  .kpi-card::after{
+    content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;
+  }
+  .kpi-card.gold::after{background:linear-gradient(90deg,var(--dorado),var(--dorado2));}
+  .kpi-card.green::after{background:var(--verde);}
+  .kpi-card.red::after{background:var(--rojo);}
+  .kpi-card.mixed::after{background:linear-gradient(90deg,var(--dorado),var(--verde));}
+
+  .kpi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gris);margin-bottom:8px;font-weight:600;}
+  .kpi-value{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:1px;}
+  .kpi-sub{font-size:.78rem;color:var(--gris);margin-top:4px;}
+
+  /* Tabla resumen */
+  .tabla-wrap{overflow-x:auto;border-radius:6px;border:1px solid rgba(201,169,75,.2);}
+  table{width:100%;border-collapse:collapse;min-width:480px;}
+  thead{background:var(--azul2);}
+  thead th{
+    padding:13px 18px;font-size:.72rem;text-transform:uppercase;
+    letter-spacing:1.5px;color:var(--dorado);font-weight:700;text-align:left;
+  }
+  thead th:not(:first-child){text-align:center;}
+
+  tbody tr{border-bottom:1px solid rgba(201,169,75,.08);transition:background .15s;}
+  tbody tr:hover{background:rgba(201,169,75,.04);}
+  tbody td{padding:13px 18px;font-size:.9rem;}
+  tbody td:not(:first-child){text-align:center;}
+
+  .cat-name{font-weight:600;}
+  .badge-num{
+    display:inline-block;padding:3px 14px;border-radius:20px;
+    font-weight:700;font-size:.85rem;
+  }
+  .badge-vendidos{background:rgba(201,169,75,.12);color:var(--dorado2);}
+  .badge-checkin{background:rgba(29,185,107,.12);color:var(--verde);}
+  .badge-saldo{background:rgba(231,76,60,.1);color:var(--rojo);font-size:.78rem;}
+
+  /* Fila total */
+  .row-total{background:var(--azul2)!important;}
+  .row-total td{font-weight:700;color:var(--blanco);border-top:2px solid rgba(201,169,75,.3)!important;}
+  .row-total .cat-name{color:var(--dorado);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;font-size:1rem;}
+
+  /* Últimas ventas */
+  .section-title{
+    font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;
+    color:var(--dorado);margin-bottom:14px;margin-top:32px;
+  }
+  .ultimas-list{}
+  .ultima-item{
+    background:var(--azul2);border:1px solid rgba(201,169,75,.1);
+    border-radius:4px;padding:12px 16px;margin-bottom:8px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .ultima-nombre{font-weight:600;font-size:.9rem;}
+  .ultima-meta{font-size:.78rem;color:var(--gris);}
+  .ultima-hora{font-size:.75rem;color:var(--gris);}
+
+  /* Refresh btn */
+  .btn-refresh{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 20px;border:1px solid rgba(201,169,75,.3);border-radius:4px;
+    background:none;color:var(--dorado);cursor:pointer;font-family:'Barlow',sans-serif;
+    font-size:.82rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:.2s;
+  }
+  .btn-refresh:hover{background:rgba(201,169,75,.08);}
+  .btn-refresh.spin svg{animation:spin .7s linear infinite;}
+
+  /* Login fields */
+  .field-group{margin-bottom:20px;}
+  .field-group label{display:block;font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gris);margin-bottom:7px;font-weight:600;}
+  .field-group input{
+    width:100%;background:var(--azul3);border:1px solid rgba(201,169,75,.2);
+    border-radius:4px;padding:11px 14px;color:var(--blanco);font-family:'Barlow',sans-serif;
+    font-size:.95rem;outline:none;
+  }
+  .field-group input:focus{border-color:var(--dorado);}
+  .btn-primary{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:11px 26px;border:none;border-radius:4px;cursor:pointer;
+    font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:600;
+    letter-spacing:1px;text-transform:uppercase;
+    background:linear-gradient(135deg,var(--dorado),var(--dorado2));color:var(--azul);
+    width:100%;margin-top:4px;
+  }
+
+  .alert{padding:12px 16px;border-radius:4px;margin:12px 0;font-size:.88rem;display:none;align-items:center;gap:10px;}
+  .alert.show{display:flex;}
+  .alert-err{background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.3);color:var(--rojo);}
+
+  .last-update{font-size:.75rem;color:var(--gris);margin-top:4px;}
+
+  /* Barra de progreso */
+  .pct-bar{
+    display:flex;align-items:center;gap:8px;
+  }
+  .bar-outer{flex:1;height:6px;background:rgba(201,169,75,.1);border-radius:3px;min-width:60px;}
+  .bar-inner{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--verde),var(--dorado));transition:width .6s ease;}
+  .pct-num{font-size:.75rem;color:var(--gris);min-width:30px;text-align:right;}
+
+  /* Spinner */
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(201,169,75,.3);border-top-color:var(--dorado);border-radius:50%;animation:spin .6s linear infinite;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Auto-refresh toggle */
+  .auto-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:.78rem;color:var(--gris);cursor:pointer;user-select:none;
+  }
+  .auto-pill input[type=checkbox]{accent-color:var(--verde);}
+</style>
+</head>
+<body>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-title">📊 Resumen del Evento</div>
+    <div class="login-sub">IV Congreso de Ingeniería Industrial</div>
+    <div class="field-group">
+      <label>Usuario</label>
+      <input type="text" id="loginUser" placeholder="Tu usuario" autocomplete="off"/>
+    </div>
+    <div class="field-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••"/>
+    </div>
+    <div id="loginAlert" class="alert alert-err"></div>
+    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+    <div style="margin-top:16px;text-align:center;">
+      <a href="index.html" style="color:var(--gris);font-size:.8rem;text-decoration:none;">← Volver al menú</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MAIN ═══════ -->
+<div id="mainScreen">
+  <div class="topbar">
+    <span class="topbar-title">📊 Resumen — IV Congreso II</span>
+    <div class="topbar-right">
+      <label class="auto-pill">
+        <input type="checkbox" id="autoRefresh" onchange="toggleAuto()"/> Auto-actualizar (30s)
+      </label>
+      <button class="btn-refresh" id="refreshBtn" onclick="cargarResumen()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        Actualizar
+      </button>
+      <a href="index.html" style="color:var(--gris);text-decoration:none;font-size:.8rem;">← Menú</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card gold">
+        <div class="kpi-label">Tickets Vendidos</div>
+        <div class="kpi-value" id="kpiVendidos">—</div>
+        <div class="kpi-sub">Total registrados</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Check-ins Realizados</div>
+        <div class="kpi-value" id="kpiCheckin">—</div>
+        <div class="kpi-sub">Asistentes ingresados</div>
+      </div>
+      <div class="kpi-card mixed">
+        <div class="kpi-label">% Asistencia</div>
+        <div class="kpi-value" id="kpiPct">—</div>
+        <div class="kpi-sub">Checkin / Vendidos</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Saldo Pendiente</div>
+        <div class="kpi-value" id="kpiSaldo">—</div>
+        <div class="kpi-sub">Por cobrar total</div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--dorado);">
+          Desglose por Categoría
+        </div>
+        <div class="last-update" id="lastUpdate"></div>
+      </div>
+      <div id="loadingIndicator" style="display:none;"><span class="spinner"></span></div>
+    </div>
+
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th>Tickets Vendidos</th>
+            <th>Check-in</th>
+            <th>% Asistencia</th>
+            <th>Saldo (Q)</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody">
+          <tr><td colspan="5" style="text-align:center;padding:28px;color:var(--gris);">Cargando datos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Últimas ventas -->
+    <div class="section-title">Últimas Ventas Registradas</div>
+    <div id="ultimasLista" class="ultimas-list">
+      <div style="color:var(--gris);font-size:.85rem;">—</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var GAS_URL = "https://script.google.com/macros/s/AKfycbzceeqLOr2Mwf5OY2f6DNlFm97akxLCUE9BnMnTKJ7Q9OZ6wyXIWdqWCPDDuQ_BFtTU/exec";
+var autoTimer = null;
+
+// ════════════════════════
+// LOGIN
+// ════════════════════════
+function doLogin(){
+  var user = document.getElementById('loginUser').value.trim();
+  var pass = document.getElementById('loginPass').value.trim();
+  if(!user||!pass){ showLoginAlert('Ingresa usuario y contraseña.'); return; }
+
+  callGAS({action:'loginResumen', usuario:user, pass:pass}, function(res){
+    if(res.ok){
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('mainScreen').classList.add('active');
+      cargarResumen();
+    } else {
+      showLoginAlert(res.mensaje);
+    }
+  });
+}
+document.getElementById('loginPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+function showLoginAlert(msg){
+  var el=document.getElementById('loginAlert');
+  el.className='alert show alert-err';
+  el.textContent=msg;
+}
+
+// ════════════════════════
+// CARGAR RESUMEN
+// ════════════════════════
+function cargarResumen(){
+  var btn = document.getElementById('refreshBtn');
+  var li  = document.getElementById('loadingIndicator');
+  btn.classList.add('spin'); li.style.display='block';
+
+  callGAS({action:'getResumen'}, function(res){
+    btn.classList.remove('spin'); li.style.display='none';
+    if(!res || !res.filas){ return; }
+    renderTabla(res);
+    renderUltimas(res.ultimasVentas||[]);
+    renderKPIs(res);
+    document.getElementById('lastUpdate').textContent =
+      'Actualizado: ' + new Date().toLocaleTimeString('es-GT');
+  });
+}
+
+// ════════════════════════
+// RENDER TABLA
+// ════════════════════════
+function renderTabla(data){
+  var html = '';
+  data.filas.forEach(function(f){
+    var esTotal = f.categoria === 'TOTAL';
+    var pct     = f.vendidos>0 ? Math.round((f.checkin/f.vendidos)*100) : 0;
+    var bar     = '<div class="pct-bar"><div class="bar-outer"><div class="bar-inner" style="width:'+pct+'%"></div></div><span class="pct-num">'+pct+'%</span></div>';
+
+    html += '<tr class="'+(esTotal?'row-total':'')+'">'
+          + '<td class="cat-name">'+escHtml(f.categoria)+'</td>'
+          + '<td><span class="badge-num badge-vendidos">'+f.vendidos+'</span></td>'
+          + '<td><span class="badge-num badge-checkin">'+f.checkin+'</span></td>'
+          + '<td>'+(esTotal?'<strong>'+pct+'%</strong>':bar)+'</td>'
+          + '<td>'+(parseFloat(f.saldo)>0?'<span class="badge-num badge-saldo">Q'+parseFloat(f.saldo).toFixed(2)+'</span>':'<span style="color:var(--verde);font-size:.8rem;">✓ Al día</span>')+'</td>'
+          + '</tr>';
+  });
+  document.getElementById('tablaBody').innerHTML = html;
+}
+
+// ════════════════════════
+// RENDER KPIs
+// ════════════════════════
+function renderKPIs(data){
+  var totalVendidos=0, totalCheckin=0, totalSaldo=0;
+  data.filas.forEach(function(f){
+    if(f.categoria!=='TOTAL'){
+      totalVendidos += f.vendidos;
+      totalCheckin  += f.checkin;
+      totalSaldo    += parseFloat(f.saldo)||0;
+    }
+  });
+  var pct = totalVendidos>0 ? Math.round((totalCheckin/totalVendidos)*100) : 0;
+  document.getElementById('kpiVendidos').textContent = totalVendidos;
+  document.getElementById('kpiCheckin').textContent  = totalCheckin;
+  document.getElementById('kpiPct').textContent      = pct+'%';
+  document.getElementById('kpiSaldo').textContent    = totalSaldo>0?'Q'+totalSaldo.toFixed(0):'Q0';
+}
+
+// ════════════════════════
+// RENDER ÚLTIMAS VENTAS
+// ════════════════════════
+function renderUltimas(lista){
+  if(!lista||lista.length===0){
+    document.getElementById('ultimasLista').innerHTML='<div style="color:var(--gris);font-size:.85rem;">Sin ventas aún.</div>';
+    return;
+  }
+  var html='';
+  lista.forEach(function(v){
+    html+='<div class="ultima-item">'
+        +'<div><div class="ultima-nombre">'+escHtml(v.nombre)+'</div>'
+        +'<div class="ultima-meta">Ticket #'+escHtml(v.ticket)+' &nbsp;·&nbsp; '+escHtml(v.ciclo)+'</div></div>'
+        +'<div class="ultima-hora">'+escHtml(v.hora)+'</div>'
+        +'</div>';
+  });
+  document.getElementById('ultimasLista').innerHTML=html;
+}
+
+// ════════════════════════
+// AUTO REFRESH
+// ════════════════════════
+function toggleAuto(){
+  var cb = document.getElementById('autoRefresh');
+  if(cb.checked){
+    autoTimer = setInterval(cargarResumen, 30000);
+  } else {
+    clearInterval(autoTimer);
+  }
+}
+
+// ════════════════════════
+// UTILS
+// ════════════════════════
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function callGAS(data,cb){
+  fetch(GAS_URL,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  })
+  .then(function(r){return r.json();})
+  .then(cb)
+  .catch(function(e){console.error(e);cb({});});
+}
+</script>
+</body>
+</html>
