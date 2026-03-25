@@ -703,7 +703,7 @@ nav{
 
 <script>
 // ── Config ──
-var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbzECrUsJZIsEW0-m239BV4h4c27UNH2CRNYklbpr7fquyTZB7gCYvpsFJzt1yESqadIPg/exec';
+var SHEETS_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbwVcSd-RCPvGlRC_s7z-9TO6G1XWkAaC9e-RO_cCmGXRzzgn_zpOkX0JSB_jXkDrjnaNQ/exec';
 var DB = {
   get: function(k,def){ try{ var v=localStorage.getItem('iv4_'+k); return v!==null?JSON.parse(v):def; }catch(e){return def;} },
   set: function(k,v){ try{ localStorage.setItem('iv4_'+k,JSON.stringify(v)); }catch(e){} }
@@ -986,7 +986,7 @@ function sendFileToDrive(no, filename, base64content, mimeType){
     try {
       var form = document.createElement('form');
       form.method = 'POST';
-      form.action = sheetsUrl;
+      form.action = sheetsUrl + '?no=' + encodeURIComponent(no);
       form.target = 'upload_frame_' + Date.now();
       form.style.display = 'none';
 
