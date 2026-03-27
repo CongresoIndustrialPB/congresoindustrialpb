@@ -11,9 +11,39 @@
     --dorado:#c9a94b;--dorado2:#f0d080;
     --verde:#1db96b;--rojo:#e74c3c;
     --blanco:#f4f1ea;--gris:#8899aa;
+      --orange:#E8580A;
+  --orange2:#FF8C00;
+  --navy:#0D1F3C;  /* este es el color navy que se usa en la barra de navegación */
+  --navy2:#162B52;
+  --navy3:#1E3A6E;
+  --gold:#F5A623;
+  --white:#FFFFFF; /*Color de fondo blanco para las secciones o cajas*/
+  --bg:#F0F2F7; /*Color de fondo celeste parte baja del encabezado */
+  --border:#D1D8E8;
+  --text:#0D1F3C;
+  --muted:#6B7A99;
+  --success:#1A7F5A;
+  --success-bg:#D4EDDA;
+  --danger:#C0392B;
+  --danger-bg:#FDECEA;
+  --font:'Barlow',sans-serif;
+  --display:'Barlow Condensed',sans-serif;
+  --radius:10px;
+  --radius-lg:16px;
+    
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{min-height:100vh;background:var(--azul);font-family:'Barlow',sans-serif;color:var(--blanco);}
+
+/* TOP BAR esto va en head antes de login*/
+.top-bar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 28px;min-height:56px;box-shadow:0 3px 16px rgba(13,31,60,.35);position:sticky;top:0;z-index:200;}
+.top-bar-brand{display:flex;align-items:center;gap:12px;}
+.top-bar-brand img{height:38px;width:auto;object-fit:contain;border-radius:4px;background:transparent;}
+.top-bar-brand-text b{display:block;font-family:var(--display);font-size:16px;color:var(--gold);font-weight:900;letter-spacing:.4px;}
+.top-bar-brand-text small{display:block;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;}
+.btn-back{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);padding:8px 16px;cursor:pointer;font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;transition:all .2s;}
+.btn-back:hover{background:rgba(255,255,255,.18);color:#fff;}
+
 
   /* LOGIN */
   #loginScreen{
@@ -161,6 +191,17 @@
 </style>
 </head>
 <body>
+<!-- TOP BAR esto va en body-->
+<div class="top-bar">
+  <div class="top-bar-brand">
+    <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" alt="Logo IV Congreso">
+    <div class="top-bar-brand-text">
+      <b>IV Congreso</b>
+      <small>Ingeniería Industrial · Puerto Barrios</small>
+    </div>
+  </div>
+  <a class="btn-back" href="index.html">← Volver al Menu</a>
+</div>
 
 <!-- ═══════ LOGIN ═══════ -->
 <div id="loginScreen">
@@ -178,7 +219,8 @@
     <div id="loginAlert" class="alert alert-err"></div>
     <button class="btn-primary" onclick="doLogin()">Ingresar</button>
     <div style="margin-top:16px;text-align:center;">
-      <a href="index.html" style="color:var(--gris);font-size:.8rem;text-decoration:none;">← Volver al menú</a>
+     <!--Este es el hipervinculo para regresar al menu -->
+     <!-- <a href="index.html" style="color:var(--gris);font-size:.8rem;text-decoration:none;">← Volver al menú</a> -->
     </div>
   </div>
 </div>
