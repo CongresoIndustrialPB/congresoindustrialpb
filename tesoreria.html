@@ -563,22 +563,19 @@ var DEFAULT_USERS=[
   if(!stored){
     DB.set('users',DEFAULT_USERS);
   } else {
-    // Asegura que admin siempre exista con la contraseña correcta
     var hasAdmin=stored.find(function(u){return u.user==='admin';});
     if(!hasAdmin){
       stored.unshift({user:'admin',pass:'Congreso2025!',role:'admin',name:'Administrador'});
       DB.set('users',stored);
     }
   }
-
-  //}
 })();
 
 var receipts=[]; receipts=DB.get('receipts',[]);
 var currentUser=null, currentReceipt=null, selectedPlan='basico';
 
 // ▶ PEGA AQUÍ TU URL del Web App para que funcione sin configurar:
-var SHEETS_URL_DEFAULT='https://script.google.com/macros/s/AKfycbwVcSd-RCPvGlRC_s7z-9TO6G1XWkAaC9e-RO_cCmGXRzzgn_zpOkX0JSB_jXkDrjnaNQ/exec';
+var SHEETS_URL_DEFAULT='https://script.google.com/macros/s/AKfycbw8LUW7PPFWXLtgXg5T7dPhaI9vcLTy5AhIj4y776W-52yLXsE52HKdADtscU_zDvhWpA/exec';
 var sheetsUrl=DB.get('sheets_url','')||SHEETS_URL_DEFAULT;
 
 // ══ AUTH ══
