@@ -554,8 +554,7 @@ var DB={
   //DB.get('users', []).length < 5){
   
 (function(){
-  if(DB.get('users',null)){
-    DB.get('users', []).length < 5){
+  if(!DB.get('users', []).length < 5){
     DB.set('users',[
       {user:'admin',    pass:'Congreso2026!', role:'admin'},
       {user:'tesorero1',pass:'Tesoreria2026', role:'tesorero'},
@@ -563,7 +562,7 @@ var DB={
       {user:'ssmitho1',pass:'Tesoreria2026', role:'tesorero'},
       {user:'elariosm2',pass:'Tesoreria2026', role:'admin'}
     ]);
-  }}
+  }
 })();
 
 var receipts=[]; receipts=DB.get('receipts',[]);
