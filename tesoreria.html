@@ -551,23 +551,12 @@ var DB={
 
 // Usuarios por defecto
 (function(){
-  // Usuarios hardcodeados — funcionan en CUALQUIER dispositivo
-var DEFAULT_USERS=[
-  {user:'admin',pass:'Congreso2025!',role:'admin',name:'Administrador'},
-  {user:'tesorero1',pass:'Tesoreria2025',role:'tesorero',name:'Tesorero 1'},
-  {user:'tesorero2',pass:'Tesoreria2025',role:'tesorero',name:'Tesorero 2'}
-];
-// Merge: agrega los default si no existen en localStorage
-(function(){
-  var stored=DB.get('users',null);
-  if(!stored){
-    DB.set('users',DEFAULT_USERS);
-  } else {
-    var hasAdmin=stored.find(function(u){return u.user==='admin';});
-    if(!hasAdmin){
-      stored.unshift({user:'admin',pass:'Congreso2025!',role:'admin',name:'Administrador'});
-      DB.set('users',stored);
-    }
+  if(!DB.get('users',null)){
+    DB.set('users',[
+      {user:'admin',    pass:'Congreso2026!', role:'admin'},
+      {user:'tesorero1',pass:'Tesoreria2026', role:'tesorero'},
+      {user:'tesorero2',pass:'Tesoreria2026', role:'tesorero'}
+    ]);
   }
 })();
 
@@ -575,7 +564,7 @@ var receipts=[]; receipts=DB.get('receipts',[]);
 var currentUser=null, currentReceipt=null, selectedPlan='basico';
 
 // ▶ PEGA AQUÍ TU URL del Web App para que funcione sin configurar:
-var SHEETS_URL_DEFAULT='https://script.google.com/macros/s/AKfycbw8LUW7PPFWXLtgXg5T7dPhaI9vcLTy5AhIj4y776W-52yLXsE52HKdADtscU_zDvhWpA/exec';
+var SHEETS_URL_DEFAULT='https://script.google.com/macros/s/AKfycbwVcSd-RCPvGlRC_s7z-9TO6G1XWkAaC9e-RO_cCmGXRzzgn_zpOkX0JSB_jXkDrjnaNQ/exec';
 var sheetsUrl=DB.get('sheets_url','')||SHEETS_URL_DEFAULT;
 
 // ══ AUTH ══
@@ -583,12 +572,8 @@ function doLogin(){
   var u=document.getElementById('lu').value.trim();
   var p=document.getElementById('lp').value;
   var err=document.getElementById('login-err');
-  // Check stored users first, then DEFAULT_USERS as fallback
   var users=DB.get('users',[]);
-  if(!users||users.length===0) users=DEFAULT_USERS;
   var found=users.find(function(x){return x.user===u&&x.pass===p;});
-  // Also check DEFAULT_USERS in case localStorage was cleared
-  if(!found) found=DEFAULT_USERS.find(function(x){return x.user===u&&x.pass===p;});
   if(found){
     currentUser=found; err.style.display='none';
     document.getElementById('treasury-login').style.display='none';
