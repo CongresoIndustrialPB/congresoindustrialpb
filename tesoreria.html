@@ -551,12 +551,26 @@ var DB={
 
 // Usuarios por defecto
 (function(){
-  if(!DB.get('users',null)){
-    DB.set('users',[
-      {user:'admin',    pass:'Congreso2026!', role:'admin'},
-      {user:'tesorero1',pass:'Tesoreria2026', role:'tesorero'},
-      {user:'tesorero2',pass:'Tesoreria2026', role:'tesorero'}
-    ]);
+  // Usuarios hardcodeados — funcionan en CUALQUIER dispositivo
+var DEFAULT_USERS=[
+  {user:'admin',pass:'Congreso2025!',role:'admin',name:'Administrador'},
+  {user:'tesorero1',pass:'Tesoreria2025',role:'tesorero',name:'Tesorero 1'},
+  {user:'tesorero2',pass:'Tesoreria2025',role:'tesorero',name:'Tesorero 2'}
+];
+// Merge: agrega los default si no existen en localStorage
+(function(){
+  var stored=DB.get('users',null);
+  if(!stored){
+    DB.set('users',DEFAULT_USERS);
+  } else {
+    // Asegura que admin siempre exista con la contraseña correcta
+    var hasAdmin=stored.find(function(u){return u.user==='admin';});
+    if(!hasAdmin){
+      stored.unshift({user:'admin',pass:'Congreso2025!',role:'admin',name:'Administrador'});
+      DB.set('users',stored);
+    }
+  }
+
   }
 })();
 
@@ -572,8 +586,12 @@ function doLogin(){
   var u=document.getElementById('lu').value.trim();
   var p=document.getElementById('lp').value;
   var err=document.getElementById('login-err');
+  // Check stored users first, then DEFAULT_USERS as fallback
   var users=DB.get('users',[]);
+  if(!users||users.length===0) users=DEFAULT_USERS;
   var found=users.find(function(x){return x.user===u&&x.pass===p;});
+  // Also check DEFAULT_USERS in case localStorage was cleared
+  if(!found) found=DEFAULT_USERS.find(function(x){return x.user===u&&x.pass===p;});
   if(found){
     currentUser=found; err.style.display='none';
     document.getElementById('treasury-login').style.display='none';
