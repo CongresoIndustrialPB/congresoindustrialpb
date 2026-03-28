@@ -218,7 +218,7 @@ a{color:inherit;text-decoration:none;}
           style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;">👁</button>
       </div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="doLogin()">Ingresar al sistema →</button>
+    <button class="btn btn-primary btn-block" id="btn-login" onclick="doLogin()">Ingresar al sistema →</button>
   </div>
 </div>
 
@@ -549,16 +549,7 @@ var DB={
   set:function(k,v){try{localStorage.setItem('iv4_'+k,JSON.stringify(v));}catch(e){}}
 };
 
-// Usuarios por defecto
-(function(){
-  if(!DB.get('users',null)){
-    DB.set('users',[
-      {user:'admin',    pass:'Congreso2026!', role:'admin'},
-      {user:'tesorero1',pass:'Tesoreria2026', role:'tesorero'},
-      {user:'tesorero2',pass:'Tesoreria2026', role:'tesorero'}
-    ]);
-  }
-})();
+// Usuarios gestionados en Google Sheets — sin localStorage
 
 var receipts=[]; receipts=DB.get('receipts',[]);
 var currentUser=null, currentReceipt=null, selectedPlan='basico';
@@ -572,23 +563,36 @@ function doLogin(){
   var u=document.getElementById('lu').value.trim();
   var p=document.getElementById('lp').value;
   var err=document.getElementById('login-err');
-  var users=DB.get('users',[]);
-  var found=users.find(function(x){return x.user===u&&x.pass===p;});
-  if(found){
-    currentUser=found; err.style.display='none';
-    document.getElementById('treasury-login').style.display='none';
-    document.getElementById('treasury-dash').style.display='block';
-    document.getElementById('dash-user-label').textContent='Sesión: '+found.user+' ('+found.role+') · IV Congreso Ingeniería Industrial';
-    var ab=document.getElementById('admin-btns');
-    var asb=document.getElementById('admin-sheets-btn');
-    if(found.role==='admin'){ab.style.display='flex';if(asb)asb.style.display='inline';}
-    else{ab.style.display='none';if(asb)asb.style.display='none';}
-    updateSheetsStatus(); prefillDate(); loadReceiptsFromSheets();
-  } else {
-    err.style.display='block';
-    err.textContent='Usuario o contraseña incorrectos.';
-    document.getElementById('lp').value='';
-  }
+  var btn=document.getElementById('btn-login');
+  if(!u||!p){err.style.display='block';err.textContent='Ingresa usuario y contraseña.';return;}
+  err.style.display='none';
+  btn.textContent='Verificando...'; btn.disabled=true;
+  fetch(sheetsUrl+'?action=login&user='+encodeURIComponent(u)+'&pass='+encodeURIComponent(p))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      btn.textContent='Ingresar al sistema →'; btn.disabled=false;
+      if(data.ok){
+        var found={user:data.user,name:data.name,role:data.role};
+        currentUser=found;
+        document.getElementById('treasury-login').style.display='none';
+        document.getElementById('treasury-dash').style.display='block';
+        document.getElementById('dash-user-label').textContent='Sesión: '+found.user+' ('+found.role+') · IV Congreso Ingeniería Industrial';
+        var ab=document.getElementById('admin-btns');
+        var asb=document.getElementById('admin-sheets-btn');
+        if(found.role==='admin'){ab.style.display='flex';if(asb)asb.style.display='inline';}
+        else{ab.style.display='none';if(asb)asb.style.display='none';}
+        updateSheetsStatus(); prefillDate(); loadReceiptsFromSheets();
+      } else {
+        err.style.display='block';
+        err.textContent='Usuario o contraseña incorrectos. Verifica e intenta de nuevo.';
+        document.getElementById('lp').value='';
+      }
+    })
+    .catch(function(){
+      btn.textContent='Ingresar al sistema →'; btn.disabled=false;
+      err.style.display='block';
+      err.textContent='⚠ Sin conexión a internet. Verifica tu red e intenta de nuevo.';
+    });
 }
 
 function doLogout(){
@@ -911,74 +915,107 @@ function saveGoogleUrl(){
   showToast('✓ URL guardada.');
 }
 
-// ══ USUARIOS ══
+// ══ USUARIOS — Google Sheets ══
 function openUserMgr(){
-  renderUsersTable();
-  ['nu-user','nu-name','nu-pass'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('nu-user').value='';
+  document.getElementById('nu-name').value='';
+  document.getElementById('nu-pass').value='';
+  document.getElementById('nu-pass').placeholder='contraseña segura';
   document.getElementById('nu-role').value='tesorero';
   document.getElementById('user-err').style.display='none';
   document.getElementById('edit-user-idx').value='';
   document.getElementById('user-form-title').textContent='Agregar Nuevo Usuario';
   document.getElementById('user-form-btn').textContent='Agregar usuario';
+  document.getElementById('nu-user').disabled=false;
   openModal('modal-users');
+  renderUsersTable();
 }
+
 function renderUsersTable(){
-  var users=DB.get('users',[]);
-  var html='<table class="user-table"><thead><tr><th>Usuario</th><th>Nombre</th><th>Contraseña</th><th>Rol</th><th>Acciones</th></tr></thead><tbody>';
-  users.forEach(function(u,i){
-    var ps='<span id="pd-'+i+'">••••••••</span><span id="pt-'+i+'" style="display:none;">'+u.pass+'</span>';
-    var eb='<button class="btn btn-sm" style="padding:4px 8px;font-size:12px;background:var(--bg);border:1px solid var(--border);color:var(--navy);" onclick="togglePass('+i+')" title="Ver/ocultar">👁</button>';
-    html+='<tr><td><strong>'+u.user+'</strong></td><td>'+(u.name||'—')+'</td><td style="white-space:nowrap;">'+ps+' '+eb+'</td>';
-    html+='<td><span class="badge '+(u.role==='admin'?'badge-admin':'badge-basic')+'">'+u.role+'</span></td>';
-    html+='<td><div class="user-actions"><button class="btn btn-navy btn-sm" onclick="editUser('+i+')">✏ Editar</button>';
-    if(u.user!=='admin')html+='<button class="btn btn-danger btn-sm" onclick="deleteUser('+i+')">Eliminar</button>';
-    html+='</div></td></tr>';
-  });
-  document.getElementById('users-table-wrap').innerHTML=html+'</tbody></table>';
+  var wrap=document.getElementById('users-table-wrap');
+  wrap.innerHTML='<p style="color:var(--muted);font-size:13px;padding:12px;">Cargando usuarios...</p>';
+  fetch(sheetsUrl+'?action=listUsers')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(!data.ok){wrap.innerHTML='<p style="color:var(--danger);padding:12px;">Error al cargar usuarios.</p>';return;}
+      var tbl='<table class="user-table"><thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead><tbody>';
+      data.users.forEach(function(u){
+        tbl+='<tr><td><strong>'+u.user+'</strong></td><td>'+(u.name||'—')+'</td>';
+        tbl+='<td><span class="badge '+(u.role==='admin'?'badge-admin':'badge-basic')+'">'+u.role+'</span></td>';
+        tbl+='<td><div class="user-actions">';
+        tbl+='<button class="btn btn-navy btn-sm" onclick="editUser(''+u.user+'',''+u.name+'',''+u.role+'')">✏ Editar</button>';
+        if(u.user!=='admin') tbl+='<button class="btn btn-danger btn-sm" onclick="deleteUser(''+u.user+'')">Eliminar</button>';
+        tbl+='</div></td></tr>';
+      });
+      wrap.innerHTML=tbl+'</tbody></table>';
+    })
+    .catch(function(){wrap.innerHTML='<p style="color:var(--danger);padding:12px;">Error de conexión.</p>';});
 }
-function togglePass(i){var d=document.getElementById('pd-'+i),t=document.getElementById('pt-'+i);if(t.style.display==='none'){d.style.display='none';t.style.display='inline';}else{d.style.display='inline';t.style.display='none';}}
-function editUser(i){
-  var users=DB.get('users',[]),u=users[i];
-  document.getElementById('nu-user').value=u.user;document.getElementById('nu-name').value=u.name||'';
-  document.getElementById('nu-pass').value=u.pass;document.getElementById('nu-role').value=u.role;
-  document.getElementById('edit-user-idx').value=i;
-  document.getElementById('user-form-title').textContent='Editar Usuario: '+u.user;
+
+function togglePass(i){}
+
+function editUser(user,name,role){
+  document.getElementById('nu-user').value=user;
+  document.getElementById('nu-name').value=name||'';
+  document.getElementById('nu-pass').value='';
+  document.getElementById('nu-pass').placeholder='Nueva contraseña (vacío = no cambiar)';
+  document.getElementById('nu-role').value=role;
+  document.getElementById('edit-user-idx').value=user;
+  document.getElementById('user-form-title').textContent='Editar: '+user;
   document.getElementById('user-form-btn').textContent='Guardar cambios';
-  document.getElementById('nu-user').disabled=(u.user==='admin');
+  document.getElementById('nu-user').disabled=(user==='admin');
   document.getElementById('user-err').style.display='none';
 }
+
 function addUser(){
-  var ei=document.getElementById('edit-user-idx').value;
-  var u=document.getElementById('nu-user').value.trim(),n=document.getElementById('nu-name').value.trim();
-  var p=document.getElementById('nu-pass').value.trim(),r=document.getElementById('nu-role').value;
+  var oldUser=document.getElementById('edit-user-idx').value;
+  var u=document.getElementById('nu-user').value.trim();
+  var n=document.getElementById('nu-name').value.trim();
+  var p=document.getElementById('nu-pass').value.trim();
+  var r=document.getElementById('nu-role').value;
   var err=document.getElementById('user-err');
-  if(!u||!p){err.style.display='block';err.textContent='Completa al menos usuario y contraseña.';return;}
-  var users=DB.get('users',[]);
-  if(ei!==''){
-    var idx=parseInt(ei);users[idx].name=n;users[idx].pass=p;users[idx].role=r;
-    if(users[idx].user!=='admin')users[idx].user=u;
-    DB.set('users',users);err.style.display='none';
-    document.getElementById('edit-user-idx').value='';
-    document.getElementById('user-form-title').textContent='Agregar Nuevo Usuario';
-    document.getElementById('user-form-btn').textContent='Agregar usuario';
-    document.getElementById('nu-user').disabled=false;
-    ['nu-user','nu-name','nu-pass'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('nu-role').value='tesorero';
-    renderUsersTable();showToast('✓ Usuario "'+u+'" actualizado.');
-  } else {
-    if(users.find(function(x){return x.user===u;})){err.style.display='block';err.textContent='Ese usuario ya existe.';return;}
-    users.push({user:u,name:n,pass:p,role:r});DB.set('users',users);err.style.display='none';
-    ['nu-user','nu-name','nu-pass'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('nu-role').value='tesorero';
-    renderUsersTable();showToast('✓ Usuario "'+u+'" agregado.');
-  }
+  if(!u){err.style.display='block';err.textContent='El usuario es obligatorio.';return;}
+  if(!oldUser&&!p){err.style.display='block';err.textContent='La contraseña es obligatoria para usuarios nuevos.';return;}
+  err.style.display='none';
+  var btn=document.getElementById('user-form-btn');
+  btn.textContent='Guardando...'; btn.disabled=true;
+  var params=new URLSearchParams();
+  params.append('type',oldUser?'editUser':'addUser');
+  params.append('user',u); params.append('name',n);
+  params.append('pass',p); params.append('role',r);
+  if(oldUser) params.append('oldUser',oldUser);
+  fetch(sheetsUrl,{method:'POST',body:params})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      btn.textContent=oldUser?'Guardar cambios':'Agregar usuario'; btn.disabled=false;
+      if(!data.ok){err.style.display='block';err.textContent=data.error||'Error al guardar.';return;}
+      cancelEditUser(); renderUsersTable();
+      showToast(oldUser?'✓ Usuario actualizado.':'✓ Usuario "'+u+'" agregado.');
+    })
+    .catch(function(){
+      btn.textContent=oldUser?'Guardar cambios':'Agregar usuario'; btn.disabled=false;
+      err.style.display='block'; err.textContent='Error de conexión.';
+    });
 }
-function deleteUser(i){if(!confirm('¿Eliminar este usuario?'))return;var users=DB.get('users',[]);users.splice(i,1);DB.set('users',users);renderUsersTable();showToast('Usuario eliminado.');}
+
+function deleteUser(user){
+  if(!confirm('¿Eliminar el usuario "'+user+'"?'))return;
+  var params=new URLSearchParams();
+  params.append('type','deleteUser'); params.append('user',user);
+  fetch(sheetsUrl,{method:'POST',body:params})
+    .then(function(r){return r.json();})
+    .then(function(d){if(!d.ok){showToast('⚠ '+d.error);return;}renderUsersTable();showToast('Usuario "'+user+'" eliminado.');})
+    .catch(function(){showToast('⚠ Error de conexión.');});
+}
+
 function cancelEditUser(){
   document.getElementById('edit-user-idx').value='';
   document.getElementById('user-form-title').textContent='Agregar Nuevo Usuario';
   document.getElementById('user-form-btn').textContent='Agregar usuario';
-  ['nu-user','nu-name','nu-pass'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('nu-user').value='';
+  document.getElementById('nu-name').value='';
+  document.getElementById('nu-pass').value='';
+  document.getElementById('nu-pass').placeholder='contraseña segura';
   document.getElementById('nu-role').value='tesorero';
   document.getElementById('nu-user').disabled=false;
   document.getElementById('user-err').style.display='none';
