@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diplomas – IV Congreso de Ingeniería Industrial</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- jsPDF para generar el PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* ── RESET & VARIABLES ────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul-umg:   #003366;
+      --dorado:     #C8960C;
+      --dorado-cl:  #F0C040;
+      --gris-bg:    #F4F6F9;
+      --blanco:     #FFFFFF;
+      --texto:      #1A1A2E;
+      --sombra:     0 8px 32px rgba(0,51,102,.18);
+      --radio:      14px;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--gris-bg);
+      color: var(--texto);
+    }
+
+    /* ── HEADER ───────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--azul-umg) 60%, #005599 100%);
+      color: var(--blanco);
+      padding: 2.2rem 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-block;
+      background: var(--dorado);
+      color: var(--azul-umg);
+      font-weight: 700;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .25rem .85rem;
+      border-radius: 20px;
+      margin-bottom: .9rem;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: .5rem;
+    }
+    header p {
+      font-size: .95rem;
+      opacity: .82;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN LAYOUT ──────────────────────────────────── */
+    main {
+      max-width: 520px;
+      margin: 2.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    /* ── CARD ─────────────────────────────────────────── */
+    .card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: 2rem 2rem 2.2rem;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--azul-umg);
+      margin-bottom: .35rem;
+    }
+    .card-sub {
+      font-size: .87rem;
+      color: #666;
+      margin-bottom: 1.6rem;
+      line-height: 1.5;
+    }
+
+    /* ── FORM ─────────────────────────────────────────── */
+    .field { margin-bottom: 1.15rem; }
+    label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--azul-umg);
+      margin-bottom: .4rem;
+    }
+    input {
+      width: 100%;
+      padding: .7rem 1rem;
+      border: 1.5px solid #D0D8E4;
+      border-radius: 8px;
+      font-size: .97rem;
+      font-family: inherit;
+      color: var(--texto);
+      background: #F8FAFC;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--azul-umg);
+      box-shadow: 0 0 0 3px rgba(0,51,102,.12);
+      background: var(--blanco);
+    }
+    input::placeholder { color: #AAB4C0; }
+
+    /* ── BUTTON ───────────────────────────────────────── */
+    .btn-verificar {
+      width: 100%;
+      margin-top: .4rem;
+      padding: .85rem;
+      background: linear-gradient(135deg, var(--azul-umg), #005599);
+      color: var(--blanco);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: opacity .2s, transform .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+    }
+    .btn-verificar:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-verificar:active { transform: translateY(0); }
+    .btn-verificar:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* ── LOADER ───────────────────────────────────────── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ALERTAS ──────────────────────────────────────── */
+    .alerta {
+      margin-top: 1.2rem;
+      padding: .85rem 1rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      display: none;
+      align-items: flex-start;
+      gap: .6rem;
+    }
+    .alerta.error   { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; display: flex; }
+    .alerta.success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; display: flex; }
+    .alerta-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* ── RESULTADO / DIPLOMA ──────────────────────────── */
+    #resultado { display: none; margin-top: 2rem; }
+
+    .nombre-participante {
+      text-align: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, #EEF4FF, #E0EBFF);
+      border-radius: 10px;
+      margin-bottom: 1.4rem;
+    }
+    .nombre-participante .etiqueta {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--azul-umg);
+      opacity: .7;
+      margin-bottom: .3rem;
+    }
+    .nombre-participante .nombre {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--azul-umg);
+    }
+
+    /* Previsualización del diploma */
+    #diploma-preview-wrap {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,51,102,.15);
+      margin-bottom: 1.4rem;
+      background: #eee;
+    }
+    #diploma-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .btn-descargar {
+      width: 100%;
+      padding: .85rem;
+      background: linear-gradient(135deg, var(--dorado), #E0A800);
+      color: var(--azul-umg);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      transition: opacity .2s, transform .15s;
+      letter-spacing: .03em;
+    }
+    .btn-descargar:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-descargar:active { transform: translateY(0); }
+
+    .btn-nuevo {
+      width: 100%;
+      margin-top: .75rem;
+      padding: .7rem;
+      background: transparent;
+      border: 1.5px solid #C0CDD8;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-family: inherit;
+      color: #555;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-nuevo:hover { background: #F0F4F8; }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: .78rem;
+      color: #8898AA;
+      border-top: 1px solid #E2E8F0;
+    }
+    footer strong { color: var(--azul-umg); }
+
+    /* ── CANVAS OCULTO (generación PDF) ───────────────── */
+    #diploma-hidden {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header>
+  <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
+  <h1>IV Congreso de Ingeniería Industrial</h1>
+  <p>Descarga tu diploma de participación. Verifica tus datos para acceder.</p>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────── -->
+<main>
+  <div class="card">
+    <h2 class="card-title">🎓 Obtén tu Diploma</h2>
+    <p class="card-sub">
+      Ingresa los datos con los que te registraste al congreso. Los tres campos deben coincidir exactamente con tu registro.
+    </p>
+
+    <!-- Formulario de verificación -->
+    <div id="form-verificacion">
+      <div class="field">
+        <label for="inp-ticket">🎟️ Número de Ticket</label>
+        <input type="text" id="inp-ticket" placeholder="Ej. TK-0042" autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label for="inp-correo">📧 Correo Electrónico</label>
+        <input type="email" id="inp-correo" placeholder="ejemplo@correo.com" autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label for="inp-tel">📱 Teléfono</label>
+        <input type="tel" id="inp-tel" placeholder="Ej. 50212345678" autocomplete="off"/>
+      </div>
+
+      <button class="btn-verificar" id="btn-verificar" onclick="verificar()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-texto">Verificar y obtener diploma</span>
+      </button>
+
+      <div class="alerta error" id="alerta-error">
+        <span class="alerta-icon">⚠️</span>
+        <span id="error-msg">No se encontraron tus datos.</span>
+      </div>
+    </div>
+
+    <!-- Resultado / diploma -->
+    <div id="resultado">
+      <div class="nombre-participante">
+        <div class="etiqueta">Diploma para</div>
+        <div class="nombre" id="nombre-display">—</div>
+      </div>
+
+      <!-- Preview del diploma renderizado en canvas -->
+      <div id="diploma-preview-wrap">
+        <canvas id="diploma-canvas"></canvas>
+      </div>
+
+      <button class="btn-descargar" onclick="descargarPDF()">
+        ⬇️ Descargar Diploma en PDF
+      </button>
+      <button class="btn-nuevo" onclick="reiniciar()">← Verificar otro participante</button>
+    </div>
+  </div>
+</main>
+
+<!-- ── CANVAS OCULTO ALTA RESOLUCIÓN ────────────────────── -->
+<canvas id="diploma-hidden"></canvas>
+
+<!-- ── FOOTER ───────────────────────────────────────────── -->
+<footer>
+  <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
+  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════ -->
+<script>
+// ────────────────────────────────────────────────────────
+// CONFIGURACIÓN — edita estos dos valores:
+// ────────────────────────────────────────────────────────
+
+// 1. URL de tu Google Apps Script desplegado como Web App
+//    Después de desplegar en Apps Script, pega aquí la URL
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnePHBi1BuWH1idF-kI9c7uHHHZVU6bqDNkhCceVLJW2XOQlqj8IBHjZ1FQYagczwnNg/exec';
+
+// 2. URL de la imagen del diploma (fondo)
+//    Sube el archivo diploma_fondo.png a tu repositorio GitHub
+//    y cambia esta ruta. Si la imagen está en la misma carpeta:
+const DIPLOMA_BG_URL = './diploma_fondo.png';
+
+// ────────────────────────────────────────────────────────
+// DIMENSIONES REALES DEL DIPLOMA (792×612 pt → landscape)
+// ────────────────────────────────────────────────────────
+const DIP_W = 1584; // px en canvas (2× para nitidez)
+const DIP_H = 1224;
+
+// Posición Y del nombre en el diploma (ajusta si es necesario)
+// Medido en px sobre el canvas de 1584×1224
+const NOMBRE_Y = 535; // ~435 en escala 1× → 535 en 2×
+
+let nombreActual = '';
+let bgImage = null; // caché de la imagen de fondo
+
+// ── Precargar imagen de fondo al cargar la página ──────
+window.addEventListener('load', () => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload  = () => { bgImage = img; };
+  img.onerror = () => { console.warn('No se pudo cargar diploma_fondo.png'); };
+  img.src = DIPLOMA_BG_URL;
+});
+
+// ────────────────────────────────────────────────────────
+// VERIFICACIÓN
+// ────────────────────────────────────────────────────────
+async function verificar() {
+  const ticket   = document.getElementById('inp-ticket').value.trim();
+  const correo   = document.getElementById('inp-correo').value.trim();
+  const telefono = document.getElementById('inp-tel').value.trim();
+
+  ocultarError();
+
+  if (!ticket || !correo || !telefono) {
+    mostrarError('Por favor completa todos los campos.');
+    return;
+  }
+
+  setCargando(true);
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket, correo, telefono }),
+    });
+
+    if (!resp.ok) throw new Error('Error de red: ' + resp.status);
+
+    const data = await resp.json();
+
+    if (data.success) {
+      nombreActual = data.nombre;
+      mostrarResultado(data.nombre);
+    } else {
+      mostrarError(data.message || 'No se encontró un participante con esos datos o no tiene check-in registrado.');
+    }
+  } catch (err) {
+    mostrarError('Error de conexión. Intenta de nuevo en un momento.');
+    console.error(err);
+  } finally {
+    setCargando(false);
+  }
+}
+
+// ────────────────────────────────────────────────────────
+// MOSTRAR RESULTADO
+// ────────────────────────────────────────────────────────
+function mostrarResultado(nombre) {
+  document.getElementById('nombre-display').textContent = nombre;
+  document.getElementById('resultado').style.display = 'block';
+  document.getElementById('resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderDiploma(nombre, document.getElementById('diploma-canvas'), DIP_W / 2, DIP_H / 2);
+}
+
+// ────────────────────────────────────────────────────────
+// RENDERIZAR DIPLOMA EN CANVAS
+// w, h = dimensiones lógicas del canvas (px)
+// ────────────────────────────────────────────────────────
+function renderDiploma(nombre, canvas, w, h) {
+  canvas.width  = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+
+  const escala = w / DIP_W; // factor de escala respecto al canvas de alta res
+
+  const dibujarNombre = () => {
+    const fontSize = Math.round(30 * escala);
+    ctx.font        = `700 ${fontSize}px 'Playfair Display', serif`;
+    ctx.fillStyle   = '#1A1A2E';
+    ctx.textAlign   = 'center';
+    ctx.textBaseline = 'middle';
+
+    const x = w / 2;
+    const y = NOMBRE_Y * escala;
+
+    // Sombra suave
+    ctx.shadowColor   = 'rgba(0,0,0,0.08)';
+    ctx.shadowBlur    = 4 * escala;
+    ctx.shadowOffsetY = 1 * escala;
+
+    ctx.fillText(nombre.toUpperCase(), x, y);
+    ctx.shadowColor = 'transparent';
+  };
+
+  if (bgImage) {
+    ctx.drawImage(bgImage, 0, 0, w, h);
+    dibujarNombre();
+  } else {
+    // Fondo de reserva si la imagen no cargó
+    dibujarFondoFallback(ctx, w, h, escala);
+    dibujarNombre();
+  }
+}
+
+// ────────────────────────────────────────────────────────
+// FONDO FALLBACK (si diploma_fondo.png no está disponible)
+// ────────────────────────────────────────────────────────
+function dibujarFondoFallback(ctx, w, h, escala) {
+  // Fondo crema
+  ctx.fillStyle = '#FDFAF3';
+  ctx.fillRect(0, 0, w, h);
+
+  // Borde dorado exterior
+  const borde = 18 * escala;
+  ctx.strokeStyle = '#C8960C';
+  ctx.lineWidth   = 5 * escala;
+  ctx.strokeRect(borde, borde, w - borde * 2, h - borde * 2);
+
+  // Borde azul interior
+  const borde2 = 26 * escala;
+  ctx.strokeStyle = '#003366';
+  ctx.lineWidth   = 2 * escala;
+  ctx.strokeRect(borde2, borde2, w - borde2 * 2, h - borde2 * 2);
+
+  // Institución
+  ctx.fillStyle  = '#003366';
+  ctx.font       = `600 ${Math.round(15 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.textAlign  = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('La Facultad de Ingeniería, Matemática y Ciencias Físicas', w / 2, 60 * escala);
+  ctx.fillText('de la Universidad Mariano Gálvez de Guatemala', w / 2, 82 * escala);
+  ctx.fillText('Centro Universitario de Puerto Barrios, Izabal', w / 2, 104 * escala);
+
+  // "Otorga el presente diploma a:"
+  ctx.fillStyle = '#555';
+  ctx.font      = `400 ${Math.round(13 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Otorga el presente diploma a:', w / 2, 160 * escala);
+
+  // Línea para el nombre
+  ctx.strokeStyle = '#003366';
+  ctx.lineWidth   = 1.5 * escala;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.2, 205 * escala);
+  ctx.lineTo(w * 0.8, 205 * escala);
+  ctx.stroke();
+
+  // Título de las conferencias
+  ctx.fillStyle = '#003366';
+  ctx.font      = `700 ${Math.round(11 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Por su participación en las conferencias de:', w / 2, 225 * escala);
+
+  ctx.font      = `700 ${Math.round(13 * escala)}px 'Playfair Display', serif`;
+  const tituloLineas = [
+    '"PUERTO MARÍTIMO, RESILIENCIA Y LOGÍSTICA EN LA CADENA',
+    'GLOBAL, CADENA DE SUMINISTRO DE COMBUSTIBLE,',
+    'LOGÍSTICA COMERCIAL Y TRANSFORMACIÓN DE ESPACIOS"'
+  ];
+  tituloLineas.forEach((l, i) => {
+    ctx.fillText(l, w / 2, (255 + i * 22) * escala);
+  });
+
+  // Sub-titulo
+  ctx.fillStyle = '#444';
+  ctx.font      = `400 ${Math.round(11 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Realizado durante el Cuarto Congreso de Ingeniería Industrial con énfasis en Producción', w / 2, 330 * escala);
+  ctx.fillText('Puerto Barrios, Izabal, 25 de abril de 2026', w / 2, 350 * escala);
+
+  // Líneas de firma
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth   = 1 * escala;
+  [[w * 0.25, w * 0.44], [w * 0.56, w * 0.75]].forEach(([x1, x2]) => {
+    ctx.beginPath();
+    ctx.moveTo(x1, 430 * escala);
+    ctx.lineTo(x2, 430 * escala);
+    ctx.stroke();
+  });
+
+  ctx.fillStyle = '#333';
+  ctx.font      = `600 ${Math.round(10 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Ing. Estuardo Rafal Larios Marroquín', w * 0.345, 445 * escala);
+  ctx.font      = `400 ${Math.round(10 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Coordinador Académico / Ingeniería Industrial', w * 0.345, 460 * escala);
+
+  ctx.font      = `600 ${Math.round(10 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('MA. Lic. Víctor Manuel Bernal Canales', w * 0.655, 445 * escala);
+  ctx.font      = `400 ${Math.round(10 * escala)}px 'Source Sans 3', sans-serif`;
+  ctx.fillText('Director Universidad Mariano Gálvez de Guatemala', w * 0.655, 460 * escala);
+}
+
+// ────────────────────────────────────────────────────────
+// DESCARGAR PDF
+// ────────────────────────────────────────────────────────
+function descargarPDF() {
+  const { jsPDF } = window.jspdf;
+
+  // Renderizar en alta resolución
+  const hCanvas = document.getElementById('diploma-hidden');
+  renderDiploma(nombreActual, hCanvas, DIP_W, DIP_H);
+
+  const imgData = hCanvas.toDataURL('image/png', 1.0);
+
+  // PDF tamaño carta horizontal (792×612 pt)
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'pt',
+    format: [792, 612]
+  });
+
+  pdf.addImage(imgData, 'PNG', 0, 0, 792, 612);
+
+  const nombreArchivo = 'Diploma_' + nombreActual.replace(/\s+/g, '_') + '_IV_Congreso.pdf';
+  pdf.save(nombreArchivo);
+}
+
+// ────────────────────────────────────────────────────────
+// UTILIDADES UI
+// ────────────────────────────────────────────────────────
+function setCargando(estado) {
+  const btn  = document.getElementById('btn-verificar');
+  const spin = document.getElementById('spinner');
+  const txt  = document.getElementById('btn-texto');
+  btn.disabled        = estado;
+  spin.style.display  = estado ? 'block' : 'none';
+  txt.textContent     = estado ? 'Verificando…' : 'Verificar y obtener diploma';
+}
+
+function mostrarError(msg) {
+  const el = document.getElementById('alerta-error');
+  document.getElementById('error-msg').textContent = msg;
+  el.className = 'alerta error';
+}
+
+function ocultarError() {
+  document.getElementById('alerta-error').className = 'alerta';
+}
+
+function reiniciar() {
+  document.getElementById('inp-ticket').value = '';
+  document.getElementById('inp-correo').value = '';
+  document.getElementById('inp-tel').value    = '';
+  document.getElementById('resultado').style.display = 'none';
+  ocultarError();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Enter en inputs dispara verificación
+document.querySelectorAll('input').forEach(inp => {
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') verificar(); });
+});
+</script>
+
+</body>
+</html>
