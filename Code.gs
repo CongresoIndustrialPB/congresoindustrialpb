@@ -8,45 +8,38 @@ const SPREADSHEET_ID = '1UDkYFIqW1TiuoO-WLppqLpHQhio4DIHqwzx0svUh-5k';
 const SHEET_NAME = 'diploma'; // Hoja con query de participantes con check-in
 
 /**
- * Maneja peticiones GET (para verificar que la API funciona)
+ * Maneja peticiones GET
+ * Puede usarse como ping (?ping=1) o para verificar participante (?ticket=...&correo=...&telefono=...)
  */
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'ok', message: 'API IV Congreso activa' }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+  const params = e.parameter;
 
-/**
- * Maneja peticiones POST desde la página web
- * Body esperado: { ticket, correo, telefono }
- */
-function doPost(e) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
+  // Si no vienen parámetros de verificación, responde con estado OK
+  if (!params.ticket && !params.correo && !params.telefono) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'ok', message: 'API IV Congreso activa' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 
+  // Verificación de participante
   try {
-    const body = JSON.parse(e.postData.contents);
-    const ticket   = normalizar(body.ticket);
-    const correo   = normalizar(body.correo);
-    const telefono = normalizar(body.telefono);
+    const ticket   = normalizar(params.ticket);
+    const correo   = normalizar(params.correo);
+    const telefono = normalizar(params.telefono);
 
     if (!ticket || !correo || !telefono) {
-      return respond({ success: false, message: 'Todos los campos son requeridos.' }, headers);
+      return respond({ success: false, message: 'Todos los campos son requeridos.' });
     }
 
     const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
     const sheet = ss.getSheetByName(SHEET_NAME);
 
     if (!sheet) {
-      return respond({ success: false, message: 'Hoja "diploma" no encontrada.' }, headers);
+      return respond({ success: false, message: 'Hoja "diploma" no encontrada.' });
     }
 
     const data = sheet.getDataRange().getValues();
     // Fila 0 = encabezados: TICKET | NOMBRE COMPLETO | CORREO | TELEFONO
-    // (ajusta los índices si tu query devuelve columnas en diferente orden)
     const COL_TICKET   = 0;
     const COL_NOMBRE   = 1;
     const COL_CORREO   = 2;
@@ -62,18 +55,25 @@ function doPost(e) {
         return respond({
           success: true,
           nombre: String(row[COL_NOMBRE]).trim()
-        }, headers);
+        });
       }
     }
 
     return respond({
       success: false,
       message: 'No se encontró un participante con esos datos o no tiene check-in registrado.'
-    }, headers);
+    });
 
   } catch (err) {
-    return respond({ success: false, message: 'Error interno: ' + err.message }, headers);
+    return respond({ success: false, message: 'Error interno: ' + err.message });
   }
+}
+
+/**
+ * doPost se mantiene por compatibilidad pero ya no es necesario
+ */
+function doPost(e) {
+  return doGet(e);
 }
 
 /**
@@ -85,11 +85,10 @@ function normalizar(str) {
 }
 
 /**
- * Construye respuesta JSON con headers CORS
+ * Construye respuesta JSON
  */
-function respond(data, headers) {
-  const output = ContentService
+function respond(data) {
+  return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
-  return output;
 }
