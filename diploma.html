@@ -476,7 +476,7 @@ function renderDiploma(nombre, canvas, w, h) {
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
 
-    const x = w / 2;
+    const x = w / 2 + 50; // ← suma para ir a la derecha, resta para ir a la izquierda
     const y = NOMBRE_Y * escala;
 
     // Sombra suave
