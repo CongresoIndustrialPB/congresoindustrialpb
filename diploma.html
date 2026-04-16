@@ -410,10 +410,9 @@ async function verificar() {
   setCargando(true);
 
   try {
-    const resp = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ticket, correo, telefono }),
+    const params = new URLSearchParams({ ticket, correo, telefono });
+    const resp = await fetch(APPS_SCRIPT_URL + '?' + params.toString(), {
+      method: 'GET',
     });
 
     if (!resp.ok) throw new Error('Error de red: ' + resp.status);
