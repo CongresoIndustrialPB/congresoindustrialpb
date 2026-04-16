@@ -378,7 +378,7 @@ const DIP_H = 1224;
 
 // Posición Y del nombre en el diploma (ajusta si es necesario)
 // Medido en px sobre el canvas de 1584×1224
-const NOMBRE_Y = 500; // ~435 en escala 1× → 535 en 2×
+const NOMBRE_Y = 475; // ~435 en escala 1× → 535 en 2×
 
 let nombreActual = '';
 let bgImage = null; // caché de la imagen de fondo
@@ -470,7 +470,7 @@ function renderDiploma(nombre, canvas, w, h) {
   const escala = w / DIP_W; // factor de escala respecto al canvas de alta res
 
   const dibujarNombre = () => {
-    const fontSize = Math.round(30 * escala);
+    const fontSize = Math.round(50 * escala);
     ctx.font        = `700 ${fontSize}px 'Playfair Display', serif`;
     ctx.fillStyle   = '#1A1A2E';
     ctx.textAlign   = 'center';
