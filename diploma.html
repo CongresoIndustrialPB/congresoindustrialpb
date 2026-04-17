@@ -378,7 +378,8 @@ const DIP_H = 1224;
 
 // Posición Y del nombre en el diploma (ajusta si es necesario)
 // Medido en px sobre el canvas de 1584×1224
-const NOMBRE_Y = 535; // ~435 en escala 1× → 535 en 2×
+  // EL NOMBRE DEBE ESTAR EN LA POSICIÓN 475 QUE CORRESPONDE A LOS PIXELES POR LA ALTURA DEL DIPLOMA
+const NOMBRE_Y = 475; // ~435 en escala 1× → 535 en 2× 
 
 let nombreActual = '';
 let bgImage = null; // caché de la imagen de fondo
@@ -491,13 +492,13 @@ function renderDiploma(nombre, canvas, w, h) {
   const escala = w / DIP_W; // factor de escala respecto al canvas de alta res
 
   const dibujarNombre = () => {
-    const fontSize = Math.round(30 * escala);
+    const fontSize = Math.round(50 * escala); //ESTE ES EL TAMAÑO EN EL QUE QUIERO PONER EL TEXTO DEL NOMBRE DEL DIPLOMA
     ctx.font        = `700 ${fontSize}px 'Playfair Display', serif`;
     ctx.fillStyle   = '#1A1A2E';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
-
-    const x = w / 2;
+//AQUI VAMOS A MOVER EL NOMBRE DEL DIPLOMA A LA DERECHA O A LA IZQUIERDA SE DEBE SUMAR UNA CONSTANTE QUE SON LOS PIXELES QUE SE DESPLAZAN DESDE EL CENTRO
+    const x = w / 2 + 50; // ← suma para ir a la derecha, resta para ir a la izquierda
     const y = NOMBRE_Y * escala;
 
     // Sombra suave
