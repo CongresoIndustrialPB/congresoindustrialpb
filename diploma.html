@@ -78,18 +78,36 @@
     }
 
     /* ── MAIN LAYOUT ──────────────────────────────────── */
-    main {
-      max-width: 520px;
-      margin: 2.5rem auto;
+    /* ── LAYOUT CON SIDEBAR ─────────────────────────────── */
+    .page-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 2rem auto;
       padding: 0 1rem 3rem;
     }
-    
-/* En móvil ocultar sidebar para no ocupar espacio */
+
+    /* Barra lateral Canva */
+    .sidebar {
+      flex: 0 0 280px;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+    }
+
+    /* En móvil ocultar sidebar para no ocupar espacio */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .page-wrapper { padding: 0 1rem 3rem; }
     }
-    
+
     /* ── CARD ─────────────────────────────────────────── */
     .card {
       background: var(--blanco);
@@ -289,27 +307,23 @@
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────ENCABEZADO CON LOGO─────────────────── -->
+<!-- ── HEADER ──────────────────────────────────────────── -->
 <header>
-  <!-- <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
-  <h1>IV Congreso de Ingeniería Industrial</h1> -->
-  <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:150px;width:auto;display:block;margin:0 auto 16px;object-fit:contain;background:transparent;" alt="Logo">
-    <div class="top-bar-brand-text">
-<h2> ¡Gracias por formar parte de nuestro congreso! </h2> <!-- antes le habia puesto p y /p párrafo-->
- <!-- <h2>Descarga aquí tu diploma de participación. Verifica tus datos para acceder.</h2>-->
-      <h2>Descarga aquí tu diploma de participación.</h2>
+  <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
+  <h1>IV Congreso de Ingeniería Industrial</h1>
+  <p>Descarga tu diploma de participación. Verifica tus datos para acceder.</p>
 </header>
-  
+
 <!-- ── WRAPPER CON SIDEBAR ─────────────────────────────── -->
 <div class="page-wrapper">
 
   <!-- Barra lateral izquierda (Patrocinadores) -->
   <aside class="sidebar">
-    <img src="7_patrocinadores_pag.png"
+    <img src="7__patrocinadores_pag.png"
          alt="Patrocinadores IV Congreso"
          style="width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(63,69,81,0.16);" />
   </aside>
-  
+
 <!-- ── MAIN ────────────────────────────────────────────── -->
 <main>
   <div class="card">
@@ -364,15 +378,15 @@
   </div>
 </main>
 
+</div><!-- fin .page-wrapper -->
+
 <!-- ── CANVAS OCULTO ALTA RESOLUCIÓN ────────────────────── -->
 <canvas id="diploma-hidden"></canvas>
 
-<!-- ── FOOTER ──────────────────PIE DE PÁGINA─────────────────────────── -->
+<!-- ── FOOTER ───────────────────────────────────────────── -->
 <footer>
- <!-- <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
-  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial -->
-  <div>IV Congreso de Ingeniería Industrial · Universidad Mariano Gálvez · Puerto Barrios, Izabal</div>
-  <div>© M.A. Inga. Delmy Valiente</div>
+  <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
+  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial
 </footer>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -400,8 +414,7 @@ const DIP_H = 1224;
 
 // Posición Y del nombre en el diploma (ajusta si es necesario)
 // Medido en px sobre el canvas de 1584×1224
-  // EL NOMBRE DEBE ESTAR EN LA POSICIÓN 475 QUE CORRESPONDE A LOS PIXELES POR LA ALTURA DEL DIPLOMA
-const NOMBRE_Y = 475; // ~435 en escala 1× → 535 en 2× 
+const NOMBRE_Y = 535; // ~435 en escala 1× → 535 en 2×
 
 let nombreActual = '';
 let bgImage = null; // caché de la imagen de fondo
@@ -514,13 +527,13 @@ function renderDiploma(nombre, canvas, w, h) {
   const escala = w / DIP_W; // factor de escala respecto al canvas de alta res
 
   const dibujarNombre = () => {
-    const fontSize = Math.round(50 * escala); //ESTE ES EL TAMAÑO EN EL QUE QUIERO PONER EL TEXTO DEL NOMBRE DEL DIPLOMA
+    const fontSize = Math.round(30 * escala);
     ctx.font        = `700 ${fontSize}px 'Playfair Display', serif`;
     ctx.fillStyle   = '#1A1A2E';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
-//AQUI VAMOS A MOVER EL NOMBRE DEL DIPLOMA A LA DERECHA O A LA IZQUIERDA SE DEBE SUMAR UNA CONSTANTE QUE SON LOS PIXELES QUE SE DESPLAZAN DESDE EL CENTRO
-    const x = w / 2 + 50; // ← suma para ir a la derecha, resta para ir a la izquierda
+
+    const x = w / 2;
     const y = NOMBRE_Y * escala;
 
     // Sombra suave
