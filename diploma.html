@@ -307,19 +307,24 @@
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────────────── -->
+<!-- ── HEADER ─────────────────────────ENCABEZADO CON LOGO─────────────────── -->
 <header>
-  <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
-  <h1>IV Congreso de Ingeniería Industrial</h1>
-  <p>Descarga tu diploma de participación. Verifica tus datos para acceder.</p>
+  <!-- <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
+  <h1>IV Congreso de Ingeniería Industrial</h1> -->
+  <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:150px;width:auto;display:block;margin:0 auto 16px;object-fit:contain;background:transparent;" alt="Logo">
+    <div class="top-bar-brand-text">
+<h2> ¡Gracias por formar parte de nuestro congreso! </h2> <!-- antes le habia puesto p y /p párrafo-->
+ <!-- <h2>Descarga aquí tu diploma de participación. Verifica tus datos para acceder.</h2>-->
+      <h2>Descarga aquí tu diploma de participación.</h2>
 </header>
+
 
 <!-- ── WRAPPER CON SIDEBAR ─────────────────────────────── -->
 <div class="page-wrapper">
 
   <!-- Barra lateral izquierda (Patrocinadores) -->
   <aside class="sidebar">
-    <img src="7__patrocinadores_pag.png"
+    <img src="7_patrocinadores_pag.png"
          alt="Patrocinadores IV Congreso"
          style="width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(63,69,81,0.16);" />
   </aside>
@@ -385,8 +390,10 @@
 
 <!-- ── FOOTER ───────────────────────────────────────────── -->
 <footer>
-  <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
-  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial
+ <!-- <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
+  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial -->
+  <div>IV Congreso de Ingeniería Industrial · Universidad Mariano Gálvez · Puerto Barrios, Izabal</div>
+  <div>© M.A. Inga. Delmy Valiente</div>
 </footer>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -414,7 +421,9 @@ const DIP_H = 1224;
 
 // Posición Y del nombre en el diploma (ajusta si es necesario)
 // Medido en px sobre el canvas de 1584×1224
-const NOMBRE_Y = 535; // ~435 en escala 1× → 535 en 2×
+  // EL NOMBRE DEBE ESTAR EN LA POSICIÓN 475 QUE CORRESPONDE A LOS PIXELES POR LA ALTURA DEL DIPLOMA
+
+const NOMBRE_Y = 475; // ~435 en escala 1× → 535 en 2× 
 
 let nombreActual = '';
 let bgImage = null; // caché de la imagen de fondo
@@ -533,7 +542,9 @@ function renderDiploma(nombre, canvas, w, h) {
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
 
-    const x = w / 2;
+    //AQUI VAMOS A MOVER EL NOMBRE DEL DIPLOMA A LA DERECHA O A LA IZQUIERDA SE DEBE SUMAR UNA CONSTANTE QUE SON LOS PIXELES QUE SE DESPLAZAN DESDE EL CENTRO
+    const x = w / 2+50; // ← suma para ir a la derecha, resta para ir a la izquierda
+
     const y = NOMBRE_Y * escala;
 
     // Sombra suave
