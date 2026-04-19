@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENDA — IV Congreso Ingeniería Industrial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #E8580A;
+            --navy:   #0D1F3C;
+            --navy2:  #162B52;
+            --white:  #FFFFFF;
+            --bg:     #F0F2F7;
+            --border: #D1D8E8;
+            --text:   #0D1F3C;
+            --muted:  #6B7A99;
+            --font:    'Barlow', sans-serif;
+            --display: 'Barlow Condensed', sans-serif;
+            --radius-lg: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--navy);
+            padding: 40px 20px 90px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle diagonal accent behind header */
+        header::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0; right: 0;
+            height: 60px;
+            background: var(--bg);
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+
+        .logo-container img {
+            height: 140px;
+            width: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.35));
+        }
+
+        .info-pill {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 25px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── COUNTDOWN ── */
+        .countdown-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .cd-block { text-align: center; min-width: 52px; }
+        .cd-num {
+            display: block;
+            font-size: 34px;
+            font-weight: 800;
+            font-family: var(--display);
+            color: var(--orange);
+            line-height: 1;
+        }
+        .cd-unit { font-size: 11px; text-transform: uppercase; opacity: 0.6; margin-top: 4px; letter-spacing: 1px; }
+        .cd-sep  { font-size: 26px; font-weight: bold; color: rgba(255,255,255,0.25); padding-bottom: 20px; }
+
+        /* ── MAIN CARD ── */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            margin: -45px auto 50px;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(13,31,60,0.18);
+            border: 1px solid var(--border);
+        }
+
+        .form-header {
+            background: var(--navy2);
+            color: var(--white);
+            padding: 20px 24px;
+            text-align: center;
+            border-bottom: 4px solid var(--orange);
+        }
+
+        .form-header h3 {
+            font-family: var(--display);
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ── IFRAME ── */
+        /*
+         * El truco: altura 100vh * X para asegurarse que quepa todo el doc.
+         * min-height grande + scroll en la página principal (no en el iframe).
+         * Se usa un wrapper con overflow visible para que el doc "fluya".
+         */
+        .iframe-wrapper {
+            width: 100%;
+            /* Altura generosa: el Google Doc publicado suele tener ~1800-2500px */
+            height: 2200px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .iframe-wrapper iframe {
+            width: 100%;
+            /* iframe ligeramente más alto que el wrapper para
+               ocultar el scroll interno de Google */
+            height: calc(100% + 60px);
+            border: none;
+            display: block;
+            /* Elimina un pequeño offset que Google agrega arriba */
+            margin-top: -10px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 13px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            header { padding: 30px 15px 80px; }
+            .logo-container img { height: 100px; }
+            .cd-num { font-size: 26px; }
+            .main-content { margin-top: -40px; }
+            .iframe-wrapper { height: 2800px; } /* Más alto en móvil porque el doc refleja más */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" alt="Logo Industrial UMG">
+        </div>
+
+        <div class="info-pill">
+            📍 Hotel Puerto Libre, Puerto Barrios &nbsp;·&nbsp; 25 de Abril, 2026
+        </div>
+
+        <div class="countdown-wrap">
+            <div class="cd-block"><span class="cd-num" id="cd-d">00</span><div class="cd-unit">Días</div></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-block"><span class="cd-num" id="cd-h">00</span><div class="cd-unit">Hrs</div></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-block"><span class="cd-num" id="cd-m">00</span><div class="cd-unit">Min</div></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-block"><span class="cd-num" id="cd-s">00</span><div class="cd-unit">Seg</div></div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="form-card">
+            <div class="form-header">
+                <h3>📋 Agenda General</h3>
+            </div>
+
+            <div class="iframe-wrapper">
+                <iframe
+                    src="https://docs.google.com/document/d/e/2PACX-1vRRfJ59ENaz23-F2JQU54_sUH_nxCgjjoMRTgIkuHwd3nuPLIJ3IoGfPFS1BH9B0Hqp1aE-IppETuyb/pub?embedded=true"
+                    frameborder="0"
+                    scrolling="no"
+                    marginheight="0"
+                    marginwidth="0"
+                    title="Agenda IV Congreso de Ingeniería Industrial">
+                </iframe>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <strong>IV Congreso de Ingeniería Industrial</strong><br>
+        Universidad Mariano Gálvez de Guatemala, Sede Puerto Barrios &copy; 2026
+    </footer>
+
+    <script>
+        // ── Contador regresivo al 25 de abril de 2026 ──
+        const eventDate = new Date('April 25, 2026 08:00:00').getTime();
+
+        const updateCountdown = () => {
+            const now  = Date.now();
+            const diff = eventDate - now;
+
+            if (diff <= 0) {
+                document.querySelector('.countdown-wrap').innerHTML =
+                    "<span style='color:var(--orange);font-weight:bold;font-family:var(--display);font-size:22px;letter-spacing:2px;'>¡EL EVENTO HA COMENZADO!</span>";
+                return;
+            }
+
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000)  / 60000);
+            const s = Math.floor((diff % 60000)     / 1000);
+
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById('cd-d').textContent = pad(d);
+            document.getElementById('cd-h').textContent = pad(h);
+            document.getElementById('cd-m').textContent = pad(m);
+            document.getElementById('cd-s').textContent = pad(s);
+        };
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // ── Auto-ajuste de altura del iframe ──
+        // Intenta leer el alto real del doc una vez que cargue.
+        // (Solo funciona si el doc es del mismo origen; si no, queda la altura fija)
+        const iframe = document.querySelector('.iframe-wrapper iframe');
+        iframe.addEventListener('load', () => {
+            try {
+                const docH = iframe.contentDocument.body.scrollHeight;
+                if (docH && docH > 500) {
+                    document.querySelector('.iframe-wrapper').style.height = (docH + 80) + 'px';
+                }
+            } catch(e) {
+                // Cross-origin: dejamos la altura fija definida en CSS
+            }
+        });
+    </script>
+</body>
+</html>
