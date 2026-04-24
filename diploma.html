@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 
   <!-- jsPDF para generar el PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -16,6 +16,109 @@
   <style>
     /* ── RESET & VARIABLES ────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── VARIABLES CONGRESO ── */
+    :root {
+      --azul-umg:   #003366;
+      --dorado:     #C8960C;
+      --dorado-cl:  #F0C040;
+      --gris-bg:    #F4F6F9;
+      --blanco:     #FFFFFF;
+      --texto:      #1A1A2E;
+      --sombra:     0 8px 32px rgba(0,51,102,.18);
+      --radio:      14px;
+      /* Colores del sistema */
+      --orange: #E8580A;
+      --navy:   #0D1F3C;
+      --navy2:  #162B52;
+      --navy3:  #1E3A6E;
+      --display: 'Barlow Condensed', sans-serif;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--navy);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .nav-inner {
+      max-width: 950px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 15px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: #fff; border-bottom-color: var(--orange); }
+    .nav-link.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      padding: 36px 20px 36px;
+      text-align: center;
+      color: var(--blanco);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 55px;
+      background: var(--gris-bg);
+      clip-path: ellipse(55% 100% at 50% 100%);
+      z-index: 1;
+    }
+    header .header-content { position: relative; z-index: 2; }
+    header img.logo {
+      height: 140px;
+      width: auto;
+      display: block;
+      margin: 0 auto 16px;
+      filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
+    }
+    header h2.header-sub {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 6px;
+    }
+    header h2.header-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 600px) {
+      .nav-link { padding: 12px 10px; font-size: 13px; letter-spacing: 1px; }
+      header img.logo { height: 100px; }
+    }
 
     :root {
       --azul-umg:   #003366;
@@ -286,15 +389,16 @@
     }
     .btn-nuevo:hover { background: #F0F4F8; }
 
-    /* ── FOOTER ───────────────────────────────────────── */
     footer {
+      background: var(--navy);
+      border-top: 3px solid var(--orange);
       text-align: center;
-      padding: 1.5rem 1rem;
-      font-size: .78rem;
-      color: #8898AA;
-      border-top: 1px solid #E2E8F0;
+      padding: 28px 20px;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      line-height: 1.8;
     }
-    footer strong { color: var(--azul-umg); }
+    footer strong { color: rgba(255,255,255,0.85); }
 
     /* ── CANVAS OCULTO (generación PDF) ───────────────── */
     #diploma-hidden {
@@ -307,22 +411,23 @@
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────ENCABEZADO CON LOGO─────────────────── -->
+<!-- ── NAVBAR ── -->
 <nav>
-        <div class="nav-inner">
-            <a href="inicio.html"      class="nav-link"><span>🏠</span> Inicio</a>
-            <a href="agenda.html"     class="nav-link active"><span>📋</span> Agenda</a>
-            <a href="evaluacion.html" class="nav-link"><span>📝</span> Evaluación</a>
-            <a href="diploma.html"    class="nav-link"><span>🎓</span> Diplomas</a>
-        </div>
-  <header>
-  <!-- <div class="header-badge">Puerto Barrios, Izabal · 2026</div>
-  <h1>IV Congreso de Ingeniería Industrial</h1> -->
-  <img src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" style="height:150px;width:auto;display:block;margin:0 auto 16px;object-fit:contain;background:transparent;" alt="Logo">
-    <div class="top-bar-brand-text">
-<h2> ¡Gracias por formar parte de nuestro congreso! </h2> <!-- antes le habia puesto p y /p párrafo-->
- <!-- <h2>Descarga aquí tu diploma de participación. Verifica tus datos para acceder.</h2>-->
-      <h2>Descarga aquí tu diploma de participación.</h2>
+  <div class="nav-inner">
+    <a href="inicio.html"     class="nav-link"><span>🏠</span> Inicio</a>
+    <a href="agenda.html"     class="nav-link"><span>📋</span> Agenda</a>
+    <a href="evaluacion.html" class="nav-link"><span>📝</span> Evaluación</a>
+    <a href="diploma.html"    class="nav-link active"><span>🎓</span> Diplomas</a>
+  </div>
+</nav>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-content">
+    <img class="logo" src="https://i.ibb.co/Kx7c7gDZ/01-Logo-2026-3.png" alt="Logo IV Congreso Ingeniería Industrial">
+    <h2 class="header-sub">¡Gracias por formar parte de nuestro congreso!</h2>
+    <h2 class="header-title">Descarga aquí tu diploma de participación.</h2>
+  </div>
 </header>
 
 
@@ -397,10 +502,8 @@
 
 <!-- ── FOOTER ───────────────────────────────────────────── -->
 <footer>
- <!-- <strong>Universidad Mariano Gálvez de Guatemala</strong><br>
-  Centro Universitario de Puerto Barrios, Izabal · Ingeniería Industrial -->
-  <div>IV Congreso de Ingeniería Industrial · Universidad Mariano Gálvez · Puerto Barrios, Izabal</div>
-  <div>© M.A. Inga. Delmy Valiente</div>
+  <strong>IV Congreso de Ingeniería Industrial</strong> · Universidad Mariano Gálvez · Puerto Barrios, Izabal<br>
+  © M.A. Inga. Delmy Valiente
 </footer>
 
 <!-- ═══════════════════════════════════════════════════════
