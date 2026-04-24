@@ -31,6 +31,51 @@
             flex-direction: column;
         }
 
+        /* ── NAVBAR ── */
+        nav {
+            background: var(--navy);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--orange);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-inner {
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            font-family: var(--display);
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+            transition: color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover { color: var(--white); border-bottom-color: var(--orange); }
+        .nav-link.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+        @media (max-width: 600px) {
+            .nav-link { padding: 12px 10px; font-size: 13px; letter-spacing: 1px; }
+        }
+
         /* ── HEADER ── */
         header {
             background: var(--navy);
@@ -125,14 +170,8 @@
         }
 
         /* ── IFRAME ── */
-        /*
-         * El truco: altura 100vh * X para asegurarse que quepa todo el doc.
-         * min-height grande + scroll en la página principal (no en el iframe).
-         * Se usa un wrapper con overflow visible para que el doc "fluya".
-         */
         .iframe-wrapper {
             width: 100%;
-            /* Altura generosa: el Google Doc publicado suele tener ~1800-2500px */
             height: 2200px;
             overflow: hidden;
             background: #fff;
@@ -140,35 +179,98 @@
 
         .iframe-wrapper iframe {
             width: 100%;
-            /* iframe ligeramente más alto que el wrapper para
-               ocultar el scroll interno de Google */
             height: calc(100% + 60px);
             border: none;
             display: block;
-            /* Elimina un pequeño offset que Google agrega arriba */
             margin-top: -10px;
+            transform-origin: top left;
+        }
+
+        /* ── ESCALA EN MÓVIL ── */
+        /* El Google Doc tiene un ancho interno de ~750px.
+           En móvil lo escalamos para que quepa sin romper el texto. */
+        @media (max-width: 480px) {
+            .iframe-wrapper {
+                height: 3600px; /* más alto porque al escalar el doc ocupa más espacio vertical */
+                overflow: hidden;
+            }
+            .iframe-wrapper iframe {
+                width: 750px;           /* ancho fijo igual al del doc */
+                transform: scale(0.48); /* ajusta este valor si necesitas más/menos zoom */
+                transform-origin: top left;
+                height: calc(100% + 60px);
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 600px) {
+            .iframe-wrapper {
+                height: 2800px;
+                overflow: hidden;
+            }
+            .iframe-wrapper iframe {
+                width: 750px;
+                transform: scale(0.65);
+                transform-origin: top left;
+                height: calc(100% + 60px);
+            }
+        }
+
+        /* ── PATROCINADORES ── */
+        .sponsors-section {
+            padding: 30px 24px 35px;
+            background: var(--navy);
+            border-top: 4px solid var(--orange);
+            text-align: center;
+        }
+
+        .sponsors-section h4 {
+            font-family: var(--display);
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 18px;
+        }
+
+        .sponsors-section img {
+            width: 100%;
+            max-width: 820px;
+            height: auto;
+            display: inline-block;
         }
 
         /* ── FOOTER ── */
         footer {
+            background: var(--navy);
+            border-top: 3px solid var(--orange);
             text-align: center;
-            padding: 30px;
+            padding: 28px 20px;
+            color: rgba(255,255,255,0.5);
             font-size: 13px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
+            line-height: 1.8;
         }
 
-        /* ── RESPONSIVE ── */
+        footer strong { color: rgba(255,255,255,0.85); }
+
+        /* ── RESPONSIVE HEADER ── */
         @media (max-width: 600px) {
             header { padding: 30px 15px 80px; }
             .logo-container img { height: 100px; }
             .cd-num { font-size: 26px; }
             .main-content { margin-top: -40px; }
-            .iframe-wrapper { height: 2800px; } /* Más alto en móvil porque el doc refleja más */
         }
     </style>
 </head>
 <body>
+
+<nav>
+        <div class="nav-inner">
+            <a href="inicio.html"      class="nav-link"><span>🏠</span> Inicio</a>
+            <a href="agenda.html"     class="nav-link active"><span>📋</span> Agenda</a>
+            <a href="evaluacion.html" class="nav-link"><span>📝</span> Evaluación</a>
+            <a href="diploma.html"    class="nav-link"><span>🎓</span> Diplomas</a>
+        </div>
+    </nav>
 
     <header>
         <div class="logo-container">
@@ -206,12 +308,16 @@
                     title="Agenda IV Congreso de Ingeniería Industrial">
                 </iframe>
             </div>
+            <div class="sponsors-section">
+                <h4>Gracias al apoyo de nuestros patrocinadores</h4>
+                <img src="https://i.ibb.co/21nZzQdw/10-patrocinadores-para-pag-web-20260421-095927-0000.png" alt="Patrocinadores IV Congreso de Ingeniería Industrial">
+            </div>
         </div>
     </main>
 
     <footer>
-        <strong>IV Congreso de Ingeniería Industrial</strong><br>
-        Universidad Mariano Gálvez de Guatemala, Sede Puerto Barrios &copy; 2026
+        <strong>IV Congreso de Ingeniería Industrial</strong> · Universidad Mariano Gálvez · Puerto Barrios, Izabal<br>
+        © M.A. Inga. Delmy Valiente
     </footer>
 
     <script>
