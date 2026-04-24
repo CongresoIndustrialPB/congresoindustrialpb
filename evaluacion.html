@@ -174,6 +174,69 @@
 
         footer strong { color: rgba(255,255,255,0.85); }
 
+        /* ── BLOQUEO PREVIO AL EVENTO ── */
+        .lock-screen {
+            padding: 50px 24px 60px;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .lock-icon { font-size: 52px; margin-bottom: 16px; }
+
+        .lock-screen h4 {
+            font-family: var(--display);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .lock-screen p {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        .lock-countdown {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .lc-block { text-align: center; min-width: 70px; }
+
+        .lc-num {
+            display: block;
+            font-family: var(--display);
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--orange);
+            line-height: 1;
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+        }
+
+        .lc-unit {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .lc-sep {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--border);
+            padding-bottom: 24px;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
             header { padding: 30px 15px 80px; }
@@ -214,7 +277,26 @@
             <div class="form-header">
                 <h3>📝 Evaluación del Evento</h3>
             </div>
-            <div class="iframe-wrapper">
+            <!-- Pantalla de bloqueo (visible antes del 25/04 16:00) -->
+            <div class="lock-screen" id="lockScreen">
+                <div class="lock-icon">🔒</div>
+                <h4>Evaluación no disponible aún</h4>
+                <p>El formulario se habilitará al finalizar el congreso:<br>
+                <strong>25 de abril de 2026 a las 16:00 h</strong></p>
+
+                <div class="lock-countdown">
+                    <div class="lc-block"><span class="lc-num" id="lc-d">00</span><div class="lc-unit">Días</div></div>
+                    <span class="lc-sep">:</span>
+                    <div class="lc-block"><span class="lc-num" id="lc-h">00</span><div class="lc-unit">Horas</div></div>
+                    <span class="lc-sep">:</span>
+                    <div class="lc-block"><span class="lc-num" id="lc-m">00</span><div class="lc-unit">Min</div></div>
+                    <span class="lc-sep">:</span>
+                    <div class="lc-block"><span class="lc-num" id="lc-s">00</span><div class="lc-unit">Seg</div></div>
+                </div>
+            </div>
+
+            <!-- Formulario (oculto hasta la hora indicada) -->
+            <div class="iframe-wrapper" id="formWrapper" style="display:none;">
                 <iframe
                     src="https://docs.google.com/forms/d/e/1FAIpQLSeAz8P-mp33YJyljprFkt_9sQKH6M9kkUOZJkH5e0lCv44_sQ/viewform?embedded=true"
                     frameborder="0"
@@ -232,5 +314,36 @@
         © M.A. Inga. Delmy Valiente
     </footer>
 
-</body>
-</html>
+    <script>
+        // ── Fecha de habilitación: 25 de abril de 2026 a las 16:00 h ──
+        const unlockDate = new Date('April 25, 2026 16:00:00').getTime();
+
+        const lockScreen  = document.getElementById('lockScreen');
+        const formWrapper = document.getElementById('formWrapper');
+
+        const pad = n => String(n).padStart(2, '0');
+
+        const tick = () => {
+            const diff = unlockDate - Date.now();
+
+            if (diff <= 0) {
+                // ¡Hora de habilitar el formulario!
+                lockScreen.style.display  = 'none';
+                formWrapper.style.display = 'block';
+                return;
+            }
+
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000)  / 60000);
+            const s = Math.floor((diff % 60000)     / 1000);
+
+            document.getElementById('lc-d').textContent = pad(d);
+            document.getElementById('lc-h').textContent = pad(h);
+            document.getElementById('lc-m').textContent = pad(m);
+            document.getElementById('lc-s').textContent = pad(s);
+        };
+
+        setInterval(tick, 1000);
+        tick(); // Ejecutar inmediatamente al cargar
+    </script>
