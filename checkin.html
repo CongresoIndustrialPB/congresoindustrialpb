@@ -282,6 +282,14 @@
             <div class="label-tag">Ciclo / Categoría</div>
             <div class="value" id="rCiclo">—</div>
           </div>
+          <div class="result-field">
+            <div class="label-tag">Correo</div>
+            <div class="value" id="rCorreo" style="font-size:.9rem">—</div>
+          </div>
+          <div class="result-field">
+            <div class="label-tag">Teléfono</div>
+            <div class="value" id="rTelefono">—</div>
+          </div>
         </div>
 
         <div id="yaCheckin" class="checkin-done" style="display:none;"></div>
@@ -430,9 +438,11 @@ function seleccionarPorNombre(fila){
 function mostrarResultadoCard(res){
   filaCheckin = res.fila;
 
-  document.getElementById('rTicket').textContent = res.ticket;
-  document.getElementById('rNombre').textContent = res.nombre;
-  document.getElementById('rCiclo').textContent  = res.ciclo + (res.seccion?' · '+res.seccion:'');
+  document.getElementById('rTicket').textContent  = res.ticket;
+  document.getElementById('rNombre').textContent  = res.nombre;
+  document.getElementById('rCiclo').textContent   = res.ciclo + (res.seccion?' · '+res.seccion:'');
+  document.getElementById('rCorreo').textContent  = res.correo   || '—';
+  document.getElementById('rTelefono').textContent= res.telefono || '—';
 
   // Saldo pendiente
   var sw = document.getElementById('saldoWarn');
